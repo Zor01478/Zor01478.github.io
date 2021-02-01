@@ -284,7 +284,7 @@
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> type; <span style="color:#75715e">// 占4字节
 </span><span style="color:#75715e"></span>};
 </code></pre></div><p>若按照我们的第一印象来计算那sizeof(Mystruct)的结果将是8 + 1 + 4 = 13字节，但是实际上你在vscode上跑一下就会知道结果输出将会是16，那么是为什么呢？原因就是编译器为了提高CPU的存储速度，<strong>会对变量的起始地址做了对齐处理</strong>。（在默认情况下，例如VC规定各<strong>成员变量存放的起始地址相对于结构的起始地址的偏移量必须为该变量的类型所占用的字节数的倍数</strong>。下面列出常用类型的对齐方式(vc6.0,32位系统)）</p>
-<p><img src="https://gitee.com/zor01478/blog-picture/blob/master/img/struct.png" alt="alt 属性文本"></p>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/struct.png" alt=""></p>
 <table>
 <thead>
 <tr>
