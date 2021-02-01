@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Zor01478">
+<meta name="keywords" content="C/C&#43;&#43;, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="description" content="struct MyStruct {
+    double dda1; // 占8字节
+    char dda; // 占1字节
+    int type; // 占4字节
+};
+若按照我们的第一印象来计算那sizeof(Mystruct)的结果将是8 &#43; 1 &#43; 4 = 13字节，但是实际上你在vscode上跑一下就会知道结果输出将会是16，那么是为什么呢？原因就是编译器为了提高CPU的存储速度，会对变量的起始地址做了对齐处理。（在默认情况下，例如VC规定各成员变量存放的起始地址相对于结构的起始地址的偏移量必须为该变量的类型所占用的字节数的倍数。下面列出常用类型的对齐方式(vc6.0,32位系统)）">
+
+
+<meta property="og:description" content="struct MyStruct {
+    double dda1; // 占8字节
+    char dda; // 占1字节
+    int type; // 占4字节
+};
+若按照我们的第一印象来计算那sizeof(Mystruct)的结果将是8 &#43; 1 &#43; 4 = 13字节，但是实际上你在vscode上跑一下就会知道结果输出将会是16，那么是为什么呢？原因就是编译器为了提高CPU的存储速度，会对变量的起始地址做了对齐处理。（在默认情况下，例如VC规定各成员变量存放的起始地址相对于结构的起始地址的偏移量必须为该变量的类型所占用的字节数的倍数。下面列出常用类型的对齐方式(vc6.0,32位系统)）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于struct的字节数计算（对齐）">
+<meta name="twitter:title" content="关于struct的字节数计算（对齐）">
+<meta property="og:url" content="https://Zor01478.github.io/2021/01/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/01/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90/">
+<meta property="og:site_name" content="戴头盔的招财">
+<meta property="og:description" content="struct MyStruct {
+    double dda1; // 占8字节
+    char dda; // 占1字节
+    int type; // 占4字节
+};
+若按照我们的第一印象来计算那sizeof(Mystruct)的结果将是8 &#43; 1 &#43; 4 = 13字节，但是实际上你在vscode上跑一下就会知道结果输出将会是16，那么是为什么呢？原因就是编译器为了提高CPU的存储速度，会对变量的起始地址做了对齐处理。（在默认情况下，例如VC规定各成员变量存放的起始地址相对于结构的起始地址的偏移量必须为该变量的类型所占用的字节数的倍数。下面列出常用类型的对齐方式(vc6.0,32位系统)）">
+<meta name="twitter:description" content="struct MyStruct {
+    double dda1; // 占8字节
+    char dda; // 占1字节
+    int type; // 占4字节
+};
+若按照我们的第一印象来计算那sizeof(Mystruct)的结果将是8 &#43; 1 &#43; 4 = 13字节，但是实际上你在vscode上跑一下就会知道结果输出将会是16，那么是为什么呢？原因就是编译器为了提高CPU的存储速度，会对变量的起始地址做了对齐处理。（在默认情况下，例如VC规定各成员变量存放的起始地址相对于结构的起始地址的偏移量必须为该变量的类型所占用的字节数的倍数。下面列出常用类型的对齐方式(vc6.0,32位系统)）">
+<meta property="og:locale" content="zh-cn">
+
+  
+    <meta property="article:published_time" content="2021-01-28T15:16:13">
+  
+  
+    <meta property="article:modified_time" content="2021-01-28T15:16:13">
+  
+  
+  
+    
+      <meta property="article:section" content="招财快乐屋">
+    
+  
+  
+    
+      <meta property="article:tag" content="C/C&#43;&#43;">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/suolue.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/suolue.png">
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/caomao.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/caomao.png">
+
+
+    <title>关于struct的字节数计算（对齐）</title>
+
+    <link rel="icon" href="https://Zor01478.github.io/shanzhi.jpg">
+    
+
+    
+
+    <link rel="canonical" href="https://Zor01478.github.io/2021/01/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://Zor01478.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://Zor01478.github.io/">戴头盔的招财</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://Zor01478.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://Zor01478.github.io/images/caomao.png" alt="作者的图片" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://Zor01478.github.io/#about">
+          <img class="sidebar-profile-picture" src="https://Zor01478.github.io/images/caomao.png" alt="作者的图片" />
+        </a>
+        <h4 class="sidebar-profile-name">Zor01478</h4>
+        
+          <h5 class="sidebar-profile-bio">戴了头盔，所以头很铁</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">首页</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">类别</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">标签</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">归档</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">关于</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Zor01478" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+  <div class="post-header-cover
+              text-center
+              post-header-cover--full"
+       style="background-image:url('/images/fengmian2.jpg')"
+       data-behavior="5">
+    
+      <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      关于struct的字节数计算（对齐）
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2021-01-28T15:16:13&#43;08:00">
+        
+  一月 28, 2021
+
+      </time>
+    
+    
+  
+  
+    <span>发布在</span>
+    
+      <a class="category-link" href="https://Zor01478.github.io/categories/%e6%8b%9b%e8%b4%a2%e5%bf%ab%e4%b9%90%e5%b1%8b">招财快乐屋</a>
+    
+  
+
+  </div>
+
+</div>
+    
+  </div>
+
+
+      <div id="main" data-behavior="5"
+        class="hasCover
+               hasCoverMetaIn
+               hasCoverCaption">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+            <span class="post-header-cover-caption caption">雪国的樱花</span>
+          
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyStruct</span> {
+    <span style="color:#66d9ef">double</span> dda1; <span style="color:#75715e">// 占8字节
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> dda; <span style="color:#75715e">// 占1字节
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> type; <span style="color:#75715e">// 占4字节
+</span><span style="color:#75715e"></span>};
+</code></pre></div><p>若按照我们的第一印象来计算那sizeof(Mystruct)的结果将是8 + 1 + 4 = 13字节，但是实际上你在vscode上跑一下就会知道结果输出将会是16，那么是为什么呢？原因就是编译器为了提高CPU的存储速度，<strong>会对变量的起始地址做了对齐处理</strong>。（在默认情况下，例如VC规定各<strong>成员变量存放的起始地址相对于结构的起始地址的偏移量必须为该变量的类型所占用的字节数的倍数</strong>。下面列出常用类型的对齐方式(vc6.0,32位系统)）</p>
+<p><img src="https://gitee.com/zor01478/blog-picture/blob/master/img/struct.png" alt="alt 属性文本"></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>对齐方式（变量存放的起始地址相对于结构的起始地址的偏移量）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>char</td>
+<td>偏移量必须为sizeof(char)即1的倍数</td>
+</tr>
+<tr>
+<td>int</td>
+<td>偏移量必须为sizeof(int)即4的倍数</td>
+</tr>
+<tr>
+<td>float</td>
+<td>偏移量必须为sizeof(float)即4的倍数</td>
+</tr>
+<tr>
+<td>double</td>
+<td>偏移量必须为sizeof(double)即8的倍数</td>
+</tr>
+<tr>
+<td>short</td>
+<td>偏移量必须为sizeof(short)即2的倍数</td>
+</tr>
+<tr>
+<td>long</td>
+<td>偏移量必须为sizeof(long)即4的倍数</td>
+</tr>
+<tr>
+<td>long long</td>
+<td>偏移量必须为sizeof(long long)即8的倍数</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>各成员变量在存放的时候根据在结构中<strong>出现的顺序依次申请空间</strong>，同时按照上面的对齐方式调整位置，空缺的字节VC会自动填充。同时VC为了<strong>确保结构的大小为结构的字节边界数（<code>即该结构中占用最大空间的类型所占用的字节数</code>）的倍数</strong>，所以在为最后一个成员变量申请空间后，还会根据需要自动填充空缺的字节。</li>
+</ul>
+<ol>
+<li>为上面的结构分配空间的时候，VC根据成员变量出现的顺序和对齐方式，先为第一个成员dda1分配空间，<strong>其起始地址跟结构的起始地址相同</strong>（刚好偏移量0刚好为sizeof(double)的倍数），该成员变量占用<code>sizeof(double)=8</code>个字节；</li>
+<li>接下来为第二个成员dda分配空间，这时下一个可以分配的地址<strong>对于结构的起始地址的偏移量为8，是sizeof(char)的倍数</strong>，所以把dda存放在偏移量为8的地方满足对齐方式，该成员变量占用<code>sizeof(char)=1</code>个字节；</li>
+<li>接下来为第三个成员type分配空间，<strong>这时下一个可以分配的地址对于结构的起始地址的偏移量为9，不是sizeof(int)=4的倍数</strong>，为了满足对齐方式对偏移量的约束问题，VC自动填充3个字节（这三个字节没有放什么东西），<strong>这时下一个可以分配的地址对于结构的起始地址的偏移量为12，刚好是sizeof(int)=4的倍数，所以把type存放在偏移量为12的地方</strong>，该成员变量占用<code>sizeof(int)=4</code>个字节；这时整个结构的成员变量已经都分配了空间，总的占用的空间大小为：<code>8+1+3+4=16</code>，<strong>刚好为结构的字节边界数（即结构中占用最大空间的类型所占用的字节数sizeof(double)=8）的倍数</strong>，所以没有空缺的字节需要填充。所以sizeof(MyStruct)=8+1+3+4=16，其中有3个字节是VC自动填充的，没有放任何有意义的东西。</li>
+</ol>
+<ul>
+<li>注意：不仅仅要按照“偏移量为类型倍数”这个原则，而且还要在每个元素分配完毕后，再检查“字节边界数”是否正确。有时因为大意导致此处少计算几个字节。如下例：</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyStruct</span> {
+    <span style="color:#66d9ef">char</span> dda; <span style="color:#75715e">// 占1字节
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">double</span> dda1; <span style="color:#75715e">// 占8字节
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> type; <span style="color:#75715e">// 占4字节
+</span><span style="color:#75715e"></span>};
+</code></pre></div><p><code>sizeof(MyStruct) = 24</code>为什么呢？首先先分配dda的空间为 1 个字节，其起始地址跟结构的起始地址相同（刚好偏移量0刚好为sizeof(char)的倍数；其次再分配dda1的空间，但是对于起始地址的偏移量为1 不是sizeof(double)的倍数，为了满足对齐方式对偏移量的约束问题，VC自动填充7个字节（这7个字节没有放什么东西)，然后把dda1放在偏移量为8的的地方；最后分配type的空间相对于起始偏移量为8 + 8 = 16 刚好是sizeof(int)的倍数，故把type放在偏移量为16的地方，16 + 4  = 20 <strong>(不是结构的字节边界数的倍数即结构中占用最大空间的类型所占用的字节数sizeof(double) = 8 的倍数)</strong>，故再填充 4 字节 = 24字节，所以此时<code>sizeof(Mystruct) = 1 + 7 + 8 + 4 + 4 = 24</code>字节 ，其中7 + 4 = 11 字节是没有任何意义的。</p>
+<ul>
+<li>VC中提供了 <strong>#pragma pack(n)来设定变量以n字节对齐方式</strong>。n字节对齐就是说变量存放的起始地址的偏移量有两种情况：<strong>第一、如果n大于等于该变量所占用的字节数，那么偏移量必须满足默认的对齐方式，第二、如果n小于该变量的类型所占用的字节数，那么偏移量为n的倍数，不用满足默认的对齐方式</strong>。结构的总大小也有个约束条件，分下面两种情况：<strong>如果n大于所有成员变量类型所占用的字节数，那么结构的总大小必须为占用空间最大的变量占用的空间数的倍数；否则必须为n的倍数。</strong></li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">	<span style="color:#75715e">#pragma pack(push) </span><span style="color:#75715e">//保存对齐状态
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">#pragma pack(4)</span><span style="color:#75715e">//设定为4字节对齐
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">test</span>{
+		 <span style="color:#66d9ef">char</span> m1;
+		 <span style="color:#66d9ef">double</span> m4;
+		 <span style="color:#66d9ef">int</span>  m3;
+	};
+	<span style="color:#75715e">#pragma pack(pop)</span><span style="color:#75715e">//恢复对齐状态
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 1 + 4 + 8 + 4 = 16
+</span></code></pre></div><p>以上结构的大小为16，下面分析其存储情况，首先为m1分配空间，其偏移量为0，满足我们自己设定的对齐方式（4字节对齐），m1占用1个字节。接着开始为m4分配空间，这时其偏移量为1，需要补足3个字节，这样使偏移量满足为n=4的倍数（因为sizeof(double)大于n）,m4占用8个字节。接着为m3分配空间，这时其偏移量为12，满足为4的倍数，m3占用4个字节。这时已经为所有成员变量分配了空间，共分配了16个字节，满足为n的倍数。如果把上面的#pragma pack(4)改为#pragma pack(16)，那么我们可以得到结构的大小为24（满足默认对齐方式）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">	<span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;bits/stdc++.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
+	
+	<span style="color:#75715e">#pragma pack(4)
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyStruct</span> {
+	    <span style="color:#66d9ef">char</span> dda; <span style="color:#75715e">// 占1字节
+</span><span style="color:#75715e"></span>	    <span style="color:#66d9ef">double</span> dda1; <span style="color:#75715e">// 占8字节
+</span><span style="color:#75715e"></span>	    <span style="color:#66d9ef">int</span> type; <span style="color:#75715e">// 占4字节
+</span><span style="color:#75715e"></span>	};
+	<span style="color:#75715e">#pragma pack()
+</span><span style="color:#75715e"></span>	
+	<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+		cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;double dda1字节为 ：&#34;</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(MyStruct<span style="color:#f92672">::</span>dda1) <span style="color:#f92672">&lt;&lt;</span> endl;
+		cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;char dda字节为    ：&#34;</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(MyStruct<span style="color:#f92672">::</span>dda) <span style="color:#f92672">&lt;&lt;</span> endl;
+		cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;int type字节为    ：&#34;</span> <span style="color:#f92672">&lt;&lt;</span>  <span style="color:#66d9ef">sizeof</span>(MyStruct<span style="color:#f92672">::</span>type) <span style="color:#f92672">&lt;&lt;</span> endl;
+		<span style="color:#75715e">// 注意要考虑struct的对齐
+</span><span style="color:#75715e"></span>	    cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Mystruct的字节数为：&#34;</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(MyStruct) <span style="color:#f92672">&lt;&lt;</span> endl;
+	
+	    system(<span style="color:#e6db74">&#34;pause&#34;</span>);
+	    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+	}
+	<span style="color:#75715e">/*输出：
+</span><span style="color:#75715e">		double dda1字节为 ：8
+</span><span style="color:#75715e">		char dda字节为    ：1
+</span><span style="color:#75715e">		int type字节为    ：4
+</span><span style="color:#75715e">		Mystruct的字节数为：16
+</span></code></pre></div><p>修改 # pragam pack(1) （注意此处修改的必须是2^的整数倍，不然无法对齐）</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">	<span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;bits/stdc++.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
+	
+	<span style="color:#75715e">#pragma pack(1)
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyStruct</span> {
+	    <span style="color:#66d9ef">char</span> dda; <span style="color:#75715e">// 占1字节
+</span><span style="color:#75715e"></span>	    <span style="color:#66d9ef">double</span> dda1; <span style="color:#75715e">// 占8字节
+</span><span style="color:#75715e"></span>	    <span style="color:#66d9ef">int</span> type; <span style="color:#75715e">// 占4字节
+</span><span style="color:#75715e"></span>	};
+	<span style="color:#75715e">#pragma pack()
+</span><span style="color:#75715e"></span>	
+	<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+		cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;double dda1字节为 :&#34;</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(MyStruct<span style="color:#f92672">::</span>dda1) <span style="color:#f92672">&lt;&lt;</span> endl;
+		cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;char dda字节为    :&#34;</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(MyStruct<span style="color:#f92672">::</span>dda) <span style="color:#f92672">&lt;&lt;</span> endl;
+		cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;int type字节为    :&#34;</span> <span style="color:#f92672">&lt;&lt;</span>  <span style="color:#66d9ef">sizeof</span>(MyStruct<span style="color:#f92672">::</span>type) <span style="color:#f92672">&lt;&lt;</span> endl;
+		<span style="color:#75715e">// 注意要考虑struct的对齐
+</span><span style="color:#75715e"></span>	    cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Mystruct的字节数为:&#34;</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(MyStruct) <span style="color:#f92672">&lt;&lt;</span> endl;
+	
+	    system(<span style="color:#e6db74">&#34;pause&#34;</span>);
+	    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+	}
+	<span style="color:#75715e">/* 输出：
+</span><span style="color:#75715e">		double dda1字节为 ：8
+</span><span style="color:#75715e">		char dda字节为    ：1
+</span><span style="color:#75715e">		int type字节为    ：4
+</span><span style="color:#75715e">		Mystruct的字节数为：13
+</span><span style="color:#75715e">		
+</span><span style="color:#75715e">	若设置为 # pragam pack(8)
+</span><span style="color:#75715e">	    输出：
+</span><span style="color:#75715e">			double dda1字节为 ：8
+</span><span style="color:#75715e">			char dda字节为    ：1
+</span><span style="color:#75715e">			int type字节为    ：4
+</span><span style="color:#75715e">			Mystruct的字节数为：24
+</span><span style="color:#75715e">	*/</span>
+</code></pre></div><p><strong>- 注：没有成员变量的结构或类的大小为1，因为必须保证结构或类的每一个实例在内存中都有唯一的地址</strong></p>
+<ul>
+<li>sizeof的一些用法和以及各种类型的变量所占字节数</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">	Class Test {
+	    <span style="color:#66d9ef">int</span> a;
+	    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">double</span> c
+	}; <span style="color:#75715e">// sizeof(Test)=4.静态变量不会算入其中
+</span><span style="color:#75715e"></span>	
+	Test <span style="color:#f92672">*</span>s; <span style="color:#75715e">// sizeof(s)=4,s为一个指针。
+</span><span style="color:#75715e"></span>	
+	Class test1{}; <span style="color:#75715e">// sizeof(test1)=1;
+</span><span style="color:#75715e"></span>	
+	<span style="color:#75715e">// 参数为其他， 这个地方一定要引起注意
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// sizeof(一维数组指针)返回的是数组单个元素指针的大小，即系统指针的长度，32位系统为4，64位系统位8
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// sizeof(*一维数组指针)返回的是数组单个元素对应类型的大小
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// sizeof(二维数组指针)返回的是二维数组行指针的大小，32位系统为行数×4，64位系统位行数×8
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// sizeof(*二维数组指针)返回的是系统指针的长度，32位系统为4，64位系统位8
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// sizeof(**二维数组指针)返回的是数组单个元素指针的大小
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 在C/C++里数组作为参数时传递的实际上是指向数组第一个元素的指针，因此sizeof(str)返回的是指针的大小，即32位为 4   64位为 8
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">func</span>(<span style="color:#66d9ef">char</span> s[<span style="color:#ae81ff">5</span>]) {
+	    cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(s); 
+	    <span style="color:#75715e">//这里将输出4，本来s为一个数组，但由于做为函
+</span><span style="color:#75715e"></span>	    <span style="color:#75715e">//数的参数在传递的时候系统处理为一个指针，所
+</span><span style="color:#75715e"></span>	    <span style="color:#75715e">//以sizeof(s)实际上为求指针的大小。
+</span><span style="color:#75715e"></span>	    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>;
+	}
+	
+	<span style="color:#66d9ef">sizeof</span>(func(<span style="color:#e6db74">&#34;1234&#34;</span>)) <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span> <span style="color:#75715e">//因为func的返回类型为int，所以相当于 //求sizeof(int).
+</span></code></pre></div><ul>
+<li>C/C++ 中不同目标平台下各数据类型长度是不同的，数据类型的实际长度由编译器在编译期间通过编译参数指定目标平台而确定的。 short int，int，long int 的字节数都是随编译器指定的目标平台而异，但是在ANSI/ISO指定：</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">	<span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">short</span> <span style="color:#66d9ef">int</span>) <span style="color:#f92672">&lt;=</span> <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>);
+	<span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>) <span style="color:#f92672">&lt;=</span> <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">long</span> <span style="color:#66d9ef">int</span>);
+	<span style="color:#66d9ef">short</span> <span style="color:#66d9ef">int</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">16</span> bit (<span style="color:#ae81ff">2</span> Byte);
+	<span style="color:#66d9ef">long</span> <span style="color:#66d9ef">int</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">32</span> bit (<span style="color:#ae81ff">4</span> Byte).
+</code></pre></div><ul>
+<li>
+<p>以下是常用类型：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">char</th>
+<th style="text-align:center">short int</th>
+<th style="text-align:center">int</th>
+<th style="text-align:center">unsigned int</th>
+<th style="text-align:center">float</th>
+<th style="text-align:center">double</th>
+<th style="text-align:center">long</th>
+<th style="text-align:center">long long</th>
+<th style="text-align:center">unsigned long</th>
+<th style="text-align:center">指针</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">16位编译器</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">32位编译器</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:center">64位编译器</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">8</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>指针变量所占字节数是根据编译器的寻址空间决定宽度的：
+16 bit编译器寻址空间为16 bit，所以指针变量宽度为2 Byte;
+32 bit编译器寻址空间为32 bit，所以指针变量宽度为4 Byte;
+64 bit编译器寻址空间为64 bit，所以指针变量宽度为8 Byte.</li>
+</ul>
+</li>
+<li>
+<p>参考链接</p>
+<p><a href="https://www.cnblogs.com/qiu0130/articles/3824120.html">https://www.cnblogs.com/qiu0130/articles/3824120.html</a>
+<a href="https://zhuanlan.zhihu.com/p/93583960">https://zhuanlan.zhihu.com/p/93583960</a></p>
+</li>
+<li>
+<h4 id="补充嵌套类型含结构体成员">补充：嵌套类型（含结构体成员）</h4>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	 *  规则一：结构体中的第一个成员位置在偏移量0，之后每个变量的偏移量必须是它本身字节数的整数倍。
+</span><span style="color:#75715e">	
+</span><span style="color:#75715e">	 *  规则二：如果结构体中嵌套结构体，那么嵌套的结构体的偏移量必须是它最大成员的字节数的整数倍。
+</span><span style="color:#75715e">	
+</span><span style="color:#75715e">	 * ★规则三：结构体的总偏移量必须是它最大成员字节数的整数倍（包括嵌套的结构体中的最大成员）。★
+</span><span style="color:#75715e">	
+</span><span style="color:#75715e">	 * 如果一个结构体B里嵌套另一个结构体A，还是以最大成员类型的字节对齐，但是结构体A存储起点为A内部最大成员整数倍的地方。
+</span><span style="color:#75715e">	 * （struct B里存有struct A，A里有char，int，double等成员，那A应该从8的整数倍开始存储。）
+</span><span style="color:#75715e">	 *  结构体A中的成员的对齐规则仍满足自身的规则 
+</span><span style="color:#75715e">	 * 注意： 
+</span><span style="color:#75715e">	    1）结构体 A 整体所占的大小为该结构体成员内部最大元素的整数倍，不足补齐。 
+</span><span style="color:#75715e">	    2）不是直接将结构体 A 的成员直接移动到结构体 B 中。
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;bits/stdc++.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>	
+	<span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
+	
+	<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">test1</span>{
+		 <span style="color:#66d9ef">char</span> m1;
+		 <span style="color:#66d9ef">double</span> m4;
+		 <span style="color:#66d9ef">int</span>  m3;
+	}; <span style="color:#75715e">// 1 + 7 + 8  + 4 = 20 + 4 = 24
+</span><span style="color:#75715e"></span>	
+	<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">test2</span>{
+		 <span style="color:#66d9ef">char</span> m1;
+		 <span style="color:#66d9ef">double</span> m4; <span style="color:#75715e">// 若改为int 则为1 + 3 + 4 = 8 + 24 = 32 刚好是8 字节的倍数，因为test1的最大字节为8，故sizeof(test2)为32
+</span><span style="color:#75715e"></span>		 <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">test1</span> test; 
+	}; <span style="color:#75715e">// 1 + 7 + 8 = 16 + 24 = 40 为什么不对齐？
+</span><span style="color:#75715e"></span>	   <span style="color:#75715e">// 对齐了因为结构体test2 是以double字节对齐的（最大）与结构体成员test1的整体大小无关 40 刚好是8 的倍数
+</span><span style="color:#75715e"></span>	
+	<span style="color:#75715e">/*
+</span><span style="color:#75715e">	struct test2{
+</span><span style="color:#75715e">		 char m1;  //1 + 1 + 1 + 1 + 1 + 3 + 4 = 12 + 24 = 36 + 4 == 40 恰好为double字节的倍数
+</span><span style="color:#75715e">	     char m2;
+</span><span style="color:#75715e">	     char m3;
+</span><span style="color:#75715e">	     char m4;
+</span><span style="color:#75715e">	     char m5;
+</span><span style="color:#75715e">		 int m6;  
+</span><span style="color:#75715e">		 struct test1 test; 
+</span><span style="color:#75715e">	};
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+	    cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(test1) <span style="color:#f92672">&lt;&lt;</span> endl; <span style="color:#75715e">// 24 
+</span><span style="color:#75715e"></span>	    cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">sizeof</span>(test2); <span style="color:#75715e">// 40
+</span><span style="color:#75715e"></span>	
+	    system(<span style="color:#e6db74">&#34;pause&#34;</span>);
+	    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+	}
+</code></pre></div>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">标签</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/c/c&#43;&#43;/">C/C&#43;&#43;</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/01/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87/" data-tooltip="PHP与Java反序列化浅析（上篇）">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2021 Zor01478. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/01/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87/" data-tooltip="PHP与Java反序列化浅析（上篇）">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://Zor01478.github.io/images/caomao.png" alt="作者的图片" />
+    
+    <h4 id="about-card-name">Zor01478</h4>
+    
+      <div id="about-card-bio">戴了头盔，所以头很铁</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Sec
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        杭州
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://Zor01478.github.io/images/qianyang.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://Zor01478.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+  
+    <script src="https://Zor01478.github.io/js/clicklove.js"></script>
+  
+
+  
+    <script src="https://Zor01478.github.io/js/snow.js"></script>
+  
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/01\/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90\/';
+          
+            this.page.identifier = '\/2021\/01\/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

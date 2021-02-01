@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>招财快乐屋 on 戴头盔的招财</title>
+    <link>https://Zor01478.github.io/categories/%E6%8B%9B%E8%B4%A2%E5%BF%AB%E4%B9%90%E5%B1%8B/</link>
+    <description>Recent content in 招财快乐屋 on 戴头盔的招财</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 28 Jan 2021 15:16:13 +0800</lastBuildDate><atom:link href="https://Zor01478.github.io/categories/%E6%8B%9B%E8%B4%A2%E5%BF%AB%E4%B9%90%E5%B1%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>关于struct的字节数计算（对齐）</title>
+      <link>https://Zor01478.github.io/2021/01/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90/</link>
+      <pubDate>Thu, 28 Jan 2021 15:16:13 +0800</pubDate>
+      
+      <guid>https://Zor01478.github.io/2021/01/%E5%85%B3%E4%BA%8Estruct%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E8%AE%A1%E7%AE%97%E5%AF%B9%E9%BD%90/</guid>
+      <description>&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;MyStruct&lt;/span&gt; {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;double&lt;/span&gt; dda1; &lt;span style=&#34;color:#75715e&#34;&gt;// 占8字节
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;char&lt;/span&gt; dda; &lt;span style=&#34;color:#75715e&#34;&gt;// 占1字节
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; type; &lt;span style=&#34;color:#75715e&#34;&gt;// 占4字节
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;};
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;若按照我们的第一印象来计算那sizeof(Mystruct)的结果将是8 + 1 + 4 = 13字节，但是实际上你在vscode上跑一下就会知道结果输出将会是16，那么是为什么呢？原因就是编译器为了提高CPU的存储速度，&lt;strong&gt;会对变量的起始地址做了对齐处理&lt;/strong&gt;。（在默认情况下，例如VC规定各&lt;strong&gt;成员变量存放的起始地址相对于结构的起始地址的偏移量必须为该变量的类型所占用的字节数的倍数&lt;/strong&gt;。下面列出常用类型的对齐方式(vc6.0,32位系统)）&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
