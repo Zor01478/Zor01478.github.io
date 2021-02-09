@@ -8,33 +8,33 @@
     <language>en-us</language>
     <lastBuildDate>Tue, 09 Feb 2021 19:10:59 +0800</lastBuildDate><atom:link href="https://Zor01478.github.io/categories/%E6%8B%9B%E8%B4%A2%E6%B8%97%E9%80%8F%E5%B1%8B/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>CSRF与SSRF基础</title>
-      <link>https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf%E5%9F%BA%E7%A1%80/</link>
+      <title>CSRF与SSRF</title>
+      <link>https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf/</link>
       <pubDate>Tue, 09 Feb 2021 19:10:59 +0800</pubDate>
       
-      <guid>https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf%E5%9F%BA%E7%A1%80/</guid>
+      <guid>https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Web漏洞-CSRF（跨站请求伪造）&amp;amp; SSRF（服务器请求伪造）&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     
     <item>
-      <title>XSS基础</title>
-      <link>https://Zor01478.github.io/2021/02/xss%E5%9F%BA%E7%A1%80/</link>
+      <title>XSS</title>
+      <link>https://Zor01478.github.io/2021/02/xss/</link>
       <pubDate>Tue, 09 Feb 2021 17:56:04 +0800</pubDate>
       
-      <guid>https://Zor01478.github.io/2021/02/xss%E5%9F%BA%E7%A1%80/</guid>
+      <guid>https://Zor01478.github.io/2021/02/xss/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Web漏洞-XSS(跨站脚本攻击)&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     
     <item>
-      <title>SQL注入基础</title>
-      <link>https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5%E5%9F%BA%E7%A1%80/</link>
+      <title>SQL注入</title>
+      <link>https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5/</link>
       <pubDate>Tue, 09 Feb 2021 13:14:47 +0800</pubDate>
       
-      <guid>https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5%E5%9F%BA%E7%A1%80/</guid>
+      <guid>https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Web漏洞-SQL注入&lt;/p&gt;
 &lt;/blockquote&gt;</description>
