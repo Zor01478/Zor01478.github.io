@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Zor01478">
+<meta name="keywords" content="CSRF, SSRF, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="description" content="
+Web漏洞-CSRF（跨站请求伪造）&amp; SSRF（服务器请求伪造）
+">
+
+
+<meta property="og:description" content="
+Web漏洞-CSRF（跨站请求伪造）&amp; SSRF（服务器请求伪造）
+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSRF与SSRF基础">
+<meta name="twitter:title" content="CSRF与SSRF基础">
+<meta property="og:url" content="https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf%E5%9F%BA%E7%A1%80/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf%E5%9F%BA%E7%A1%80/">
+<meta property="og:site_name" content="戴头盔的招财">
+<meta property="og:description" content="
+Web漏洞-CSRF（跨站请求伪造）&amp; SSRF（服务器请求伪造）
+">
+<meta name="twitter:description" content="
+Web漏洞-CSRF（跨站请求伪造）&amp; SSRF（服务器请求伪造）
+">
+<meta property="og:locale" content="zh-cn">
+
+  
+    <meta property="article:published_time" content="2021-02-09T19:10:59">
+  
+  
+    <meta property="article:modified_time" content="2021-02-09T19:10:59">
+  
+  
+  
+    
+      <meta property="article:section" content="招财渗透屋">
+    
+  
+  
+    
+      <meta property="article:tag" content="Web安全">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/suolue2.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/suolue2.png">
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+
+
+
+
+  <meta property="og:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+  <meta property="twitter:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+
+
+    <title>CSRF与SSRF基础</title>
+
+    <link rel="icon" href="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+    
+
+    
+
+    <link rel="canonical" href="https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf%E5%9F%BA%E7%A1%80/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://Zor01478.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://Zor01478.github.io/">戴头盔的招财</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://Zor01478.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://Zor01478.github.io/#about">
+          <img class="sidebar-profile-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+        </a>
+        <h4 class="sidebar-profile-name">Zor01478</h4>
+        
+          <h5 class="sidebar-profile-bio">戴了头盔，所以头很铁</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">首页</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">类别</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">标签</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">归档</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">关于</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Zor01478" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+  <div class="post-header-cover
+              text-center
+              post-header-cover--full"
+       style="background-image:url('/images/fengmian2.jpg')"
+       data-behavior="5">
+    
+      <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      CSRF与SSRF基础
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2021-02-09T19:10:59&#43;08:00">
+        
+  二月 9, 2021
+
+      </time>
+    
+    
+  
+  
+    <span>发布在</span>
+    
+      <a class="category-link" href="https://Zor01478.github.io/categories/%e6%8b%9b%e8%b4%a2%e6%b8%97%e9%80%8f%e5%b1%8b">招财渗透屋</a>
+    
+  
+
+  </div>
+
+</div>
+    
+  </div>
+
+
+      <div id="main" data-behavior="5"
+        class="hasCover
+               hasCoverMetaIn
+               hasCoverCaption">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+            <span class="post-header-cover-caption caption">雪国的樱花</span>
+          
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <blockquote>
+<p>Web漏洞-CSRF（跨站请求伪造）&amp; SSRF（服务器请求伪造）</p>
+</blockquote>
+<h1 id="目录">目录</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#web%E6%BC%8F%E6%B4%9E-csrf%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0-ssrf%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0">Web漏洞-CSRF（跨站请求伪造）&amp; SSRF（服务器请求伪造）</a>
+<ul>
+<li><a href="#csrf">CSRF</a>
+<ul>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B">漏洞检测</a></li>
+<li><a href="#%E5%88%A9%E7%94%A8">利用</a></li>
+<li><a href="#%E9%98%B2%E5%BE%A1">防御</a></li>
+</ul>
+</li>
+<li><a href="#ssrf">SSRF</a>
+<ul>
+<li><a href="#%E5%88%A9%E7%94%A8-1">利用</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E7%A4%BA%E4%BE%8B">漏洞示例</a></li>
+<li><a href="#%E7%BB%95%E8%BF%87">绕过</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B6%89%E5%8F%8A%E7%BD%91%E7%AB%99">涉及网站</a></li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="web漏洞-csrf跨站请求伪造-ssrf服务器请求伪造">Web漏洞-CSRF（跨站请求伪造）&amp; SSRF（服务器请求伪造）</h2>
+<h3 id="csrf">CSRF</h3>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209181733.png" alt="CSRF"></p>
+<ul>
+<li>攻击者盗用了你的身份，<strong>以你的名义发送恶意请求</strong>，对服务器来说这个请求是完全合法的；</li>
+<li>需要知道请求的url格式，故大概率需要知道网站源码或抓包进行分析。</li>
+</ul>
+<h4 id="漏洞检测">漏洞检测</h4>
+<ul>
+<li>最简单的方法就是抓取一个正常请求的数据包，去掉Referer字段后再重新提交，如果该提交还有效，那么基本上可以确定存在CSRF漏洞。</li>
+<li>工具：CSRFTester，CSRF Request Builder</li>
+</ul>
+<h4 id="利用">利用</h4>
+<ul>
+<li>伪造HTTP请求进行未授权操作</li>
+<li>篡改、盗取目标网站上的重要用户数据</li>
+<li>未经允许执行对用户名誉或者资产有害的操作，比如：散播不良信息、进行消费等</li>
+<li>通过使用社工等方式攻击网站管理员，会危害网站本身的安全性</li>
+<li>作为其他攻击向量的辅助攻击手法，比如配合XSS</li>
+<li>传播CSRF蠕虫</li>
+</ul>
+<h4 id="防御">防御</h4>
+<ul>
+<li>验证 HTTP Referer 字段；（同源策略，即表示该请求来自哪里，攻击者可以抓包进行修改）</li>
+<li>在请求地址中添加随机 token 并验证；（破解难度较高）</li>
+<li>在 HTTP 头中自定义属性并验证；（通过 XMLHttpRequest 这个类，可以一次性给所有该类请求加上 csrftoken 这个 HTTP 头属性，并把 token 值放入其中）</li>
+<li>重要请求要求输入原始密码；</li>
+<li>验证码；</li>
+<li>限制请求方式只能为POST。</li>
+</ul>
+<h3 id="ssrf">SSRF</h3>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209183810.png" alt="SSRF">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209183822.png" alt="SSRF利用"></p>
+<h4 id="利用-1">利用</h4>
+<ul>
+<li>各种协议探针：http，file，dict，ftp，gopher</li>
+<li>漏洞攻击：端口扫描，指纹识别，漏洞利用，内网探针
+<ul>
+<li>http://192.168.64.144/phpmyadmin/</li>
+<li>file:///D:/xxxxx.xxxx</li>
+<li>dict://192.168.64.144:3306/info</li>
+<li>ftp://192.168.64.144:21
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209184210.png" alt="各语言协议"></li>
+</ul>
+</li>
+</ul>
+<h4 id="漏洞示例">漏洞示例</h4>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209184331.png" alt="SSRF示例">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209184419.png" alt="SSRF示例"></p>
+<h4 id="绕过">绕过</h4>
+<ul>
+<li>拦截不给输入内网IP？
+<a href="http://asdasd@www.baidu.com/">http://asdasd@www.baidu.com/</a>     与
+<a href="http://www.baidu.com/">http://www.baidu.com/</a>    请求时是相同的。
+所以利用 @ 构建payload</li>
+<li>各种IP地址的进制转换</li>
+<li>添加端口号：限制了子网段，可以加 :80 端口绕过；http://10.42.7.78:80</li>
+<li>短网址绕过</li>
+<li>指向任意IP的域名<strong>xip.io</strong></li>
+<li>302跳转</li>
+</ul>
+<blockquote>
+<p>HTTP状态码  <a href="https://www.ip138.com/zhuangtai/">https://www.ip138.com/zhuangtai/</a>
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/HTTP%E7%8A%B6%E6%80%81%E7%A0%811xx.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/HTTP%E7%8A%B6%E6%80%81%E7%A0%812xx.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/HTTP%E7%8A%B6%E6%80%81%E7%A0%813xx.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/HTTP%E7%8A%B6%E6%80%81%E7%A0%815xx.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/HTTP%E7%8A%B6%E6%80%81%E7%A0%816xx.png" alt=""></p>
+</blockquote>
+<h3 id="涉及网站">涉及网站</h3>
+<ol>
+<li><a href="https://www.t00ls.net/articles-41070.html">https://www.t00ls.net/articles-41070.html</a>  【SSRF漏洞(原理&amp;绕过姿势)】</li>
+</ol>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">标签</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/web%E5%AE%89%E5%85%A8/">Web安全</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/xss%E5%9F%BA%E7%A1%80/" data-tooltip="XSS基础">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2021 Zor01478. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/xss%E5%9F%BA%E7%A1%80/" data-tooltip="XSS基础">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+    
+    <h4 id="about-card-name">Zor01478</h4>
+    
+      <div id="about-card-bio">戴了头盔，所以头很铁</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Sec
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        杭州
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    <div id="cover" style="background-image:url('https://gitee.com/zor01478/blog-picture/raw/master/images/qianyang.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://Zor01478.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+  
+    <script src="https://Zor01478.github.io/js/clicklove.js"></script>
+  
+
+  
+    <script src="https://Zor01478.github.io/js/snow.js"></script>
+  
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/csrf%E4%B8%8Essrf%E5%9F%BA%E7%A1%80\/';
+          
+            this.page.identifier = '\/2021\/02\/csrf%E4%B8%8Essrf%E5%9F%BA%E7%A1%80\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

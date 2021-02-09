@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
 <meta name="author" content="Zor01478">
-<meta name="keywords" content="反序列化, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="keywords" content="反序列化, PHP, C/C&#43;&#43;, PHP, Java, 渗透">
 <meta name="description" content="
 Web漏洞-PHP反序列化
 ">
@@ -46,7 +46,7 @@ Web漏洞-PHP反序列化
     
       <meta property="article:tag" content="反序列化">
     
-      <meta property="article:tag" content="PHP">
+      <meta property="article:tag" content="Web安全">
     
   
 
@@ -287,7 +287,7 @@ Web漏洞-PHP反序列化
 </li>
 <li><a href="#%E5%AE%9E%E8%B7%B5">实践</a>
 <ul>
-<li><a href="#-%E7%BD%91%E9%BC%8E%E6%9D%AF-%E9%9D%92%E9%BE%99%E7%BB%84-web-areuserialz">-网鼎杯-青龙组-Web-AreUSerialz</a></li>
+<li><a href="#%E7%BD%91%E9%BC%8E%E6%9D%AF-%E9%9D%92%E9%BE%99%E7%BB%84-web-areuserialz">网鼎杯-青龙组-Web-AreUSerialz</a></li>
 </ul>
 </li>
 <li><a href="#%E6%B6%89%E5%8F%8A%E7%BD%91%E7%AB%99">涉及网站</a></li>
@@ -445,7 +445,7 @@ string(5) &ldquo;c/t/r&rdquo;
 <li>绕过wakeup：修改<strong>属性类型</strong>或<strong>属性名长度</strong>均可绕过执行__wakeup，因为你构造的属性和真实的属性不符；<code>但修改属性值是不会绕过__wakeup</code>，所以综述：只有改变**<code>属性个数、属性类型、属性名</code>**才可以绕过！</li>
 </ul>
 <h3 id="实践">实践</h3>
-<h4 id="-网鼎杯-青龙组-web-areuserialz">-网鼎杯-青龙组-Web-AreUSerialz</h4>
+<h4 id="网鼎杯-青龙组-web-areuserialz">网鼎杯-青龙组-Web-AreUSerialz</h4>
 <ol>
 <li>涉及知识点：unserialize、<code>==</code> 和 <code>===</code>的区别、还有上文中访问修饰符号序列化后的区别</li>
 <li><code>==</code>只是对值得比较（将两边值转化为同类型再比较），而<code>===</code>则是对值和类型的比较。</li>
@@ -630,7 +630,7 @@ $a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <
                     
   <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">反序列化</a>
 
-  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/php/">PHP</a>
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/web%E5%AE%89%E5%85%A8/">Web安全</a>
 
                   </div>
                 
