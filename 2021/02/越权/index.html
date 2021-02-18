@@ -7,34 +7,34 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
 <meta name="author" content="Zor01478">
-<meta name="keywords" content="任意文件读取&下载, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="keywords" content="越权, C/C&#43;&#43;, PHP, Java, 渗透">
 <meta name="description" content="
-Web漏洞-任意文件读取&amp;下载
+Web漏洞-业务逻辑越权（水平/垂直越权）
 ">
 
 
 <meta property="og:description" content="
-Web漏洞-任意文件读取&amp;下载
+Web漏洞-业务逻辑越权（水平/垂直越权）
 ">
 <meta property="og:type" content="article">
-<meta property="og:title" content="任意文件读取与下载">
-<meta name="twitter:title" content="任意文件读取与下载">
-<meta property="og:url" content="https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
-<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
+<meta property="og:title" content="越权">
+<meta name="twitter:title" content="越权">
+<meta property="og:url" content="https://Zor01478.github.io/2021/02/%E8%B6%8A%E6%9D%83/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/%E8%B6%8A%E6%9D%83/">
 <meta property="og:site_name" content="戴头盔的招财">
 <meta property="og:description" content="
-Web漏洞-任意文件读取&amp;下载
+Web漏洞-业务逻辑越权（水平/垂直越权）
 ">
 <meta name="twitter:description" content="
-Web漏洞-任意文件读取&amp;下载
+Web漏洞-业务逻辑越权（水平/垂直越权）
 ">
 <meta property="og:locale" content="zh-cn">
 
   
-    <meta property="article:published_time" content="2021-02-17T20:56:02">
+    <meta property="article:published_time" content="2021-02-17T21:51:22">
   
   
-    <meta property="article:modified_time" content="2021-02-17T20:56:02">
+    <meta property="article:modified_time" content="2021-02-17T21:51:22">
   
   
   
@@ -71,14 +71,14 @@ Web漏洞-任意文件读取&amp;下载
   <meta property="twitter:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
 
 
-    <title>任意文件读取与下载</title>
+    <title>越权</title>
 
     <link rel="icon" href="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
     
 
     
 
-    <link rel="canonical" href="https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
+    <link rel="canonical" href="https://Zor01478.github.io/2021/02/%E8%B6%8A%E6%9D%83/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -227,13 +227,13 @@ Web漏洞-任意文件读取&amp;下载
       <div class="post-header main-content-wrap text-center">
   
     <h1 class="post-title" itemprop="headline">
-      任意文件读取与下载
+      越权
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2021-02-17T20:56:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2021-02-17T21:51:22&#43;08:00">
         
   二月 17, 2021
 
@@ -267,198 +267,200 @@ Web漏洞-任意文件读取&amp;下载
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <blockquote>
-<p>Web漏洞-任意文件读取&amp;下载</p>
+<p>Web漏洞-业务逻辑越权（水平/垂直越权）</p>
 </blockquote>
 <h1 id="目录">目录</h1>
 <!-- raw HTML omitted -->
 <ul>
-<li><a href="#web%E6%BC%8F%E6%B4%9E-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8B%E8%BD%BD">Web漏洞-任意文件读取&amp;下载</a>
+<li><a href="#web%E6%BC%8F%E6%B4%9E-%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91%E8%B6%8A%E6%9D%83%E6%B0%B4%E5%B9%B3%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83">Web漏洞-业务逻辑越权（水平/垂直越权）</a>
 <ul>
-<li><a href="#%E4%BA%A7%E7%94%9F">产生</a></li>
-<li><a href="#%E6%A3%80%E6%B5%8B">检测</a></li>
-<li><a href="#%E5%88%A9%E7%94%A8">利用</a></li>
+<li><a href="#%E5%8E%9F%E7%90%86">原理</a></li>
+<li><a href="#%E7%B1%BB%E5%88%AB">类别</a></li>
 <li><a href="#%E4%BF%AE%E5%A4%8D">修复</a></li>
-<li><a href="#%E5%AE%9E%E8%B7%B5">实践</a>
-<ul>
-<li><a href="#easy-java">Easy Java</a></li>
-<li><a href="#%E7%99%BE%E5%BA%A6%E6%9D%AF-ctf-%E4%BA%8C%E6%9C%88%E5%9C%BA">百度杯 CTF 二月场</a></li>
-</ul>
-</li>
+<li><a href="#%E5%88%A9%E7%94%A8">利用</a></li>
 <li><a href="#%E6%B6%89%E5%8F%8A%E7%BD%91%E7%AB%99">涉及网站</a></li>
 </ul>
 </li>
 </ul>
 <!-- raw HTML omitted -->
-<h2 id="web漏洞-任意文件读取下载">Web漏洞-任意文件读取&amp;下载</h2>
-<h3 id="产生">产生</h3>
-<p>没有对读取或下载做一个白名单或者限制(任意语言代码下载功能函数)</p>
-<h3 id="检测">检测</h3>
-<ul>
+<h2 id="web漏洞-业务逻辑越权水平垂直越权">Web漏洞-业务逻辑越权（水平/垂直越权）</h2>
+<h3 id="原理">原理</h3>
+<p><code>检查授权时存在纰漏</code>，使得攻击者在获得低权限用户账户后，利用一些方式绕过权限检查，访问或者操作其他用户或者更高权限。越权漏洞的成因主要是因为开发人员在对数据进行增、删、改、查询时对客户端请求的数据过分相信而遗漏了权限的判定，一旦权限验证不充分，就易致越权漏洞。</p>
+<ol>
 <li>
-<p>白盒</p>
-<ul>
-<li>代码审计</li>
-</ul>
+<p><code>通过隐藏 URL</code>
+实现控制访问有些程序的管理员的管理页面只有管理员才显示，普通用户看不到，利用 URL 实现访问控制，但 URL 泄露或被恶意攻击者猜到后，这会导致越权攻击。</p>
 </li>
 <li>
-<p>黑盒</p>
-<ul>
-<li>工具</li>
-<li>公开漏洞</li>
-<li>手工查看功能点（资源下载）及三数值</li>
-</ul>
-</li>
-</ul>
-<h3 id="利用">利用</h3>
-<ul>
-<li>
-<p>常见文件&ndash;后台首页日志等可见文件</p>
+<p><code>直接对象引用</code>
+这种通过修改一下参数就可以产生水平越权，例如查看用户信息页面 URL 后加上自己的 id 便可查看，当修改为他人的 ID 号时会返回他人的信息，便产生了水平越权。</p>
 </li>
 <li>
-<p>敏感文件（扫描工具扫描网站目录结构）</p>
-<ul>
-<li>数据库配置文件</li>
-<li>各种借口文件</li>
-<li>秘钥信息文件</li>
-<li>&hellip;</li>
-</ul>
+<p><code>多阶段功能</code>
+多阶段功能是一个功能有多个阶段的实现。例如修改密码，可能第一步是验证用户身份信息，号码验证码类的。当验证成功后，跳到第二步，输入新密码，很多程序会在这一步不再验证用户身份，导致恶意攻击者抓包直接修改参数值，导致可修改任意用户密码。</p>
 </li>
 <li>
-<p>常见文件名，参数值，目录符号</p>
-<ul>
-<li>read.xxx?filename=</li>
-<li>down.xxx?filename=</li>
-<li>readfile.xxx?file=</li>
-<li>downfile.xxx?file=</li>
-<li>../   ..\  .\  ./  &hellip;</li>
-<li>%00  ？ %23  %20 &hellip;</li>
-<li>&amp;readpath，&amp;filepath=，&amp;path=，&amp;inputfile=，&amp;url=，&amp;data=，&amp;readfile=，- &amp;menu=，META-INF=，WEB-INF</li>
-</ul>
+<p><code>静态文件</code>
+很多网站的下载功能，一些被下载的静态文件，例如 pdf、word、xls 等，可能只有付费用户或会员可下载，但当这些文件的 URL 地址泄露后，导致任何人可下载，如果知道 URL 命名规则，则会便利服务器的收费文档进行批量下载。</p>
 </li>
+<li>
+<p><code>平台配置错误</code>
+一些程序会通过控件来限制用户的访问，例如后台地址，普通用户不属于管理员组，则不能访问。但当配置平台或配置控件错误时，就会出现越权访问。</p>
+</li>
+</ol>
+<h3 id="类别">类别</h3>
+<ul>
+<li>水平越权</li>
+<li>垂直越权</li>
 </ul>
 <table>
 <thead>
 <tr>
-<th style="text-align:center">符号</th>
-<th style="text-align:center">含义</th>
+<th style="text-align:center">垂直越权</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center">./</td>
-<td style="text-align:center">当前目录</td>
+<td style="text-align:center">超级管理员</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td style="text-align:center">../</td>
-<td style="text-align:center">上级目录（即父目录）</td>
+<td style="text-align:center">管理员</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td style="text-align:center">/</td>
-<td style="text-align:center">根目录</td>
+<td style="text-align:center">计划专员</td>
+<td style="text-align:center">向上就是垂直 / 向右就是水平</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">普通用户</td>
+<td style="text-align:center">用户A</td>
+<td style="text-align:center">用户B</td>
+<td style="text-align:center">用户 C</td>
+<td style="text-align:center"><strong>水平越权</strong></td>
 </tr>
 </tbody>
 </table>
-<hr>
-<p>// 常见的敏感信息路径</p>
-<ul>
-<li>
-<p>Windows</p>
-<ul>
-<li>c:\boot.ini // 查看系统版本</li>
-<li>c:\XX\httpd.conf   Apache配置信息</li>
-<li>c:\windows\system32\inetsrv\MetaBase.xml // IIS配置文件</li>
-<li>c:\windows\repair\sam // 存储Windows系统初次安装的密码</li>
-<li>c:\ProgramFiles\mysql\my.ini // MySQL配置</li>
-<li>c:\ProgramFiles\mysql\data\mysql\user.MYD // MySQL root密码</li>
-<li>c:\windows\php.ini // php 配置信息</li>
-</ul>
-</li>
-<li>
-<p>Linux/Unix</p>
-<ul>
-<li>/etc/passwd  账户信息</li>
-<li>/etc/shadow  账户密码文件</li>
-<li>/etc/httpd/conf/httpd.conf  Apache配置文件</li>
-<li>/etc/my.conf  mysql 配置文件</li>
-<li>/usr/local/app/apache2/conf/httpd.conf  Apache2默认配置文件</li>
-<li>/usr/local/app/apache2/conf/extra/httpd-vhost.conf     虚拟网站配置</li>
-<li>/usr/local/app/php5/lib/php.ini  PHP相关配置</li>
-</ul>
-</li>
-</ul>
-<hr>
 <h3 id="修复">修复</h3>
 <ul>
-<li>WAF</li>
-<li>固定目录或过滤跨目录符号</li>
-<li>目录权限设置或单独文件资源设置</li>
+<li>前后端同时校验用户 输入信息</li>
+<li>调用前先判定用户权限</li>
+<li>执行关键操作时必须验证用户身份以及数据操作权限</li>
+<li>直接引用对象ID加密，防止枚举；敏感数据特殊化处理</li>
+<li>用户输入永远不可信，过滤
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E8%B6%8A%E6%9D%8301.png" alt=""></li>
 </ul>
-<blockquote>
-<p>文件被解析：文件包含漏洞
-显示源码：文件读取漏洞
-提示文件下载：文件下载漏洞</p>
-</blockquote>
-<h3 id="实践">实践</h3>
-<h4 id="easy-java">Easy Java</h4>
-<ul>
-<li>题目地址：https://buuoj.cn/challenges#%5BRoarCTF%202019%5DEasy%20Java</li>
-</ul>
-<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9601.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9602.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9603.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9604.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9605.png" alt=""></p>
+<h3 id="利用">利用</h3>
 <ul>
 <li>
-<p><a href="http://a85d669b-1621-4606-9dbf-9dba10f7d4a7.node3.buuoj.cn/Download?filename=help.docx">http://a85d669b-1621-4606-9dbf-9dba10f7d4a7.node3.buuoj.cn/Download?filename=help.docx</a>   <strong>修改它会不会进行下载呢？</strong></p>
+<p>登录</p>
+<ul>
+<li>暴力破解</li>
+<li>本地加密传输</li>
+<li>Cookie脆弱</li>
+<li>Session劫持</li>
+<li>密文对比认证</li>
+</ul>
 </li>
 <li>
-<p>考虑到网站开发脚本的配置文件：根据题目提示Easy Java</p>
+<p>业务
+<a href="https://shimo.im/mindmaps/CcXv6jKpRrpVqxHW/">https://shimo.im/mindmaps/CcXv6jKpRrpVqxHW/</a> （业务逻辑漏洞思维导图）</p>
+<ul>
+<li>订单ID</li>
+<li>手机号码</li>
+<li>用户ID</li>
+<li>商品ID</li>
+<li>其他（数量，价格，支付状态，优惠，重复）</li>
+</ul>
 </li>
 <li>
-<p>Javaweb的配置文件：<code>WEB-INF/web.xml</code></p>
-</li>
-</ul>
-<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9606.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9607.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9608.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9609.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9610.png" alt=""></p>
-<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9611.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9612.png" alt=""></p>
+<p>验证</p>
 <ul>
-<li>flag{b0ac66b4-3308-4266-80f3-954eb9f0775a}   填进去完事了。</li>
+<li>Token、验证码</li>
+<li>暴力破解</li>
+<li>绕过测试</li>
+<li>自动识别</li>
+<li>复用/回显</li>
 </ul>
-<h4 id="百度杯-ctf-二月场">百度杯 CTF 二月场</h4>
-<ul>
-<li>题目地址：https://www.ichunqiu.com/battalion?t=1&amp;r=57475</li>
-</ul>
-<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9613.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9614.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9615.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9616.png" alt=""></p>
-<ul>
-<li>module=../../../etc/passwd&amp;name=    也没有回显</li>
-<li>?module=&hellip;/./&hellip;/./&hellip;/./etc/nginx/nginx.conf&amp;name=</li>
-</ul>
-<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9617.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9618.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9619.png" alt=""></p>
-<ul>
-<li>
-<p><a href="http://56e0fb2bd83144c7963ec96f93a0074d4cfd212d04604113.changame.ichunqiu.com/online-movies/">http://56e0fb2bd83144c7963ec96f93a0074d4cfd212d04604113.changame.ichunqiu.com/online-movies/</a></p>
 </li>
 <li>
-<p>/online-movies../  这个目录下</p>
+<p>工具</p>
+<ul>
+<li>captcha-killer</li>
+<li>Pkav_Http_Fuzz</li>
+<li>reCAPTCHA</li>
+</ul>
+</li>
+<li>
+<p>数据</p>
+<ul>
+<li>支付篡改</li>
+<li>数据篡改</li>
+<li>数据重放</li>
+<li>其他</li>
+</ul>
+</li>
+<li>
+<p>找回</p>
+<ul>
+<li>客户端回显</li>
+<li>Response状态值</li>
+<li>Session覆盖</li>
+<li>弱Token缺陷</li>
+<li>找回流程绕过</li>
+<li>其他</li>
+</ul>
+</li>
+<li>
+<p>接口</p>
+<ul>
+<li>调用遍历</li>
+<li>参数篡改</li>
+<li>未授权访问
+<ul>
+<li>Jboss</li>
+<li>Jenkins</li>
+<li>ldap</li>
+<li>Redis</li>
+<li>elasticsearch</li>
+<li>MenCache</li>
+<li>MongoDB</li>
+<li>Rsync</li>
+<li>Zookeeper</li>
+<li>Docker</li>
+</ul>
+</li>
+<li>webservice测试</li>
+<li>callback自定义</li>
+</ul>
+</li>
+<li>
+<p>回退</p>
+<ul>
+<li>回退重放</li>
+</ul>
 </li>
 </ul>
-<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9620.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9621.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9622.png" alt="">
-<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD&amp;%E8%AF%BB%E5%8F%9623.png" alt=""></p>
 <h3 id="涉及网站">涉及网站</h3>
 <ol>
-<li><a href="https://www.seebug.org/vuldb/ssvid-98122">https://www.seebug.org/vuldb/ssvid-98122</a>   【小米路由器远程任意文件读取漏洞（CVE-2019-18371）】</li>
+<li><a href="https://github.com/ztosec/secscan-authcheck">https://github.com/ztosec/secscan-authcheck</a>   【越权检测工具】</li>
+<li><a href="http://pan.baidu.com/s/1pLjaQKF">http://pan.baidu.com/s/1pLjaQKF</a>    【工具】</li>
+<li><a href="https://www.secpulse.com/archives/67080.html">https://www.secpulse.com/archives/67080.html</a> 【挖洞技巧：支付漏洞之总结】</li>
+<li><a href="https://github.com/c0ny1/captcha-killer/releases/tag/0.1.2">https://github.com/c0ny1/captcha-killer/releases/tag/0.1.2</a> 【captcha-killer】</li>
+<li><a href="https://www.freebuf.com/news/233800.html">https://www.freebuf.com/news/233800.html</a>    【freebuf越权文章】</li>
 </ol>
               
             </div>
@@ -484,7 +486,7 @@ Web漏洞-任意文件读取&amp;下载
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-tooltip="文件包含">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/" data-tooltip="任意文件读取与下载">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -492,7 +494,7 @@ Web漏洞-任意文件读取&amp;下载
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E8%B6%8A%E6%9D%83/" data-tooltip="越权">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/xxe/" data-tooltip="XXE">
               
                   <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                   <i class="fa fa-angle-right"></i>
@@ -552,7 +554,7 @@ Web漏洞-任意文件读取&amp;下载
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-tooltip="文件包含">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/" data-tooltip="任意文件读取与下载">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -560,7 +562,7 @@ Web漏洞-任意文件读取&amp;下载
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/%E8%B6%8A%E6%9D%83/" data-tooltip="越权">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/xxe/" data-tooltip="XXE">
               
                   <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                   <i class="fa fa-angle-right"></i>
@@ -694,9 +696,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD\/';
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/%E8%B6%8A%E6%9D%83\/';
           
-            this.page.identifier = '\/2021\/02\/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD\/'
+            this.page.identifier = '\/2021\/02\/%E8%B6%8A%E6%9D%83\/'
           
         };
         (function() {

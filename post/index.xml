@@ -6,7 +6,40 @@
     <description>Recent content in Posts on 戴头盔的招财</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 17 Feb 2021 20:56:02 +0800</lastBuildDate><atom:link href="https://Zor01478.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 18 Feb 2021 12:34:18 +0800</lastBuildDate><atom:link href="https://Zor01478.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java安全-JWT安全及预编译CASE注入</title>
+      <link>https://Zor01478.github.io/2021/02/java%E5%AE%89%E5%85%A8-jwt%E5%AE%89%E5%85%A8%E5%8F%8A%E9%A2%84%E7%BC%96%E8%AF%91case%E6%B3%A8%E5%85%A5/</link>
+      <pubDate>Thu, 18 Feb 2021 12:34:18 +0800</pubDate>
+      
+      <guid>https://Zor01478.github.io/2021/02/java%E5%AE%89%E5%85%A8-jwt%E5%AE%89%E5%85%A8%E5%8F%8A%E9%A2%84%E7%BC%96%E8%AF%91case%E6%B3%A8%E5%85%A5/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;Java安全-JWT安全及预编译CASE注入&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>XXE</title>
+      <link>https://Zor01478.github.io/2021/02/xxe/</link>
+      <pubDate>Thu, 18 Feb 2021 11:29:24 +0800</pubDate>
+      
+      <guid>https://Zor01478.github.io/2021/02/xxe/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;Web漏洞-XXE&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>越权</title>
+      <link>https://Zor01478.github.io/2021/02/%E8%B6%8A%E6%9D%83/</link>
+      <pubDate>Wed, 17 Feb 2021 21:51:22 +0800</pubDate>
+      
+      <guid>https://Zor01478.github.io/2021/02/%E8%B6%8A%E6%9D%83/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;Web漏洞-业务逻辑越权（水平/垂直越权）&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
     <item>
       <title>任意文件读取与下载</title>
       <link>https://Zor01478.github.io/2021/02/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%B8%8B%E8%BD%BD/</link>
