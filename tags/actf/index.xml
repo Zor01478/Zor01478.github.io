@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ACTF on 戴头盔的招财</title>
+    <link>https://Zor01478.github.io/tags/actf/</link>
+    <description>Recent content in ACTF on 戴头盔的招财</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Feb 2021 10:29:25 +0800</lastBuildDate><atom:link href="https://Zor01478.github.io/tags/actf/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ACTF</title>
+      <link>https://Zor01478.github.io/2021/02/actf/</link>
+      <pubDate>Sun, 21 Feb 2021 10:29:25 +0800</pubDate>
+      
+      <guid>https://Zor01478.github.io/2021/02/actf/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;ACTF&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
