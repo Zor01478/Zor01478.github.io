@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Zor01478">
+<meta name="keywords" content="PHP, 代码审计, C/C&#43;&#43;, PHP, Java, 渗透">
+<meta name="description" content="
+PHP代码审计入门(一) - 绕过过滤的空白字符串
+">
+
+
+<meta property="og:description" content="
+PHP代码审计入门(一) - 绕过过滤的空白字符串
+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP代码审计入门(一)">
+<meta name="twitter:title" content="PHP代码审计入门(一)">
+<meta property="og:url" content="https://Zor01478.github.io/2021/02/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8%E4%B8%80/">
+<meta property="twitter:url" content="https://Zor01478.github.io/2021/02/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8%E4%B8%80/">
+<meta property="og:site_name" content="戴头盔的招财">
+<meta property="og:description" content="
+PHP代码审计入门(一) - 绕过过滤的空白字符串
+">
+<meta name="twitter:description" content="
+PHP代码审计入门(一) - 绕过过滤的空白字符串
+">
+<meta property="og:locale" content="zh-cn">
+
+  
+    <meta property="article:published_time" content="2021-02-26T11:00:18">
+  
+  
+    <meta property="article:modified_time" content="2021-02-26T11:00:18">
+  
+  
+  
+    
+      <meta property="article:section" content="招财审计屋">
+    
+  
+  
+    
+      <meta property="article:tag" content="PHP">
+    
+      <meta property="article:tag" content="代码审计">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/suolue2.png">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/suolue2.png">
+
+
+  <meta property="og:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+  <meta property="twitter:image" content="https://Zor01478.github.io/images/fengmian2.jpg">
+
+
+
+
+  <meta property="og:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+  <meta property="twitter:image" content="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+
+
+    <title>PHP代码审计入门(一)</title>
+
+    <link rel="icon" href="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png">
+    
+
+    
+
+    <link rel="canonical" href="https://Zor01478.github.io/2021/02/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8%E4%B8%80/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://Zor01478.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://Zor01478.github.io/">戴头盔的招财</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://Zor01478.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://Zor01478.github.io/#about">
+          <img class="sidebar-profile-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+        </a>
+        <h4 class="sidebar-profile-name">Zor01478</h4>
+        
+          <h5 class="sidebar-profile-bio">戴了头盔，所以头很铁</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">首页</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">类别</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">标签</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">归档</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">关于</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Zor01478" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://Zor01478.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+  <div class="post-header-cover
+              text-center
+              post-header-cover--full"
+       style="background-image:url('/images/fengmian2.jpg')"
+       data-behavior="5">
+    
+      <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      PHP代码审计入门(一)
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2021-02-26T11:00:18&#43;08:00">
+        
+  二月 26, 2021
+
+      </time>
+    
+    
+  
+  
+    <span>发布在</span>
+    
+      <a class="category-link" href="https://Zor01478.github.io/categories/%e6%8b%9b%e8%b4%a2%e5%ae%a1%e8%ae%a1%e5%b1%8b">招财审计屋</a>
+    
+  
+
+  </div>
+
+</div>
+    
+  </div>
+
+
+      <div id="main" data-behavior="5"
+        class="hasCover
+               hasCoverMetaIn
+               hasCoverCaption">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+            <span class="post-header-cover-caption caption">雪国的樱花</span>
+          
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <blockquote>
+<p>PHP代码审计入门(一) - 绕过过滤的空白字符串</p>
+</blockquote>
+<h1 id="目录">目录</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#php-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8---%E7%BB%95%E8%BF%87%E8%BF%87%E6%BB%A4%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6%E4%B8%B2">php 代码审计入门 - 绕过过滤的空白字符串</a>
+<ul>
+<li><a href="#0x01-%E5%88%86%E6%9E%90">0x01 分析</a></li>
+<li><a href="#0x02-%E6%9E%84%E9%80%A0fuzz">0x02 构造(Fuzz)</a></li>
+<li><a href="#0x03-%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">0x03 参考链接</a></li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="php-代码审计入门---绕过过滤的空白字符串">php 代码审计入门 - 绕过过滤的空白字符串</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+
+$info <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>; 
+$req <span style="color:#f92672">=</span> [];
+$flag <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;flag{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}&#34;</span>;
+
+<span style="color:#a6e22e">ini_set</span>(<span style="color:#e6db74">&#34;display_error&#34;</span>, <span style="color:#66d9ef">false</span>); 
+<span style="color:#a6e22e">error_reporting</span>(<span style="color:#ae81ff">0</span>); 
+
+<span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;number&#39;</span>])){  <span style="color:#75715e">// 检测变量是否设置
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">header</span>(<span style="color:#e6db74">&#34;hint:26966dc52e85af40f59b4fe73d8c323a.txt&#34;</span>); 
+	<span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;have a fun!!&#34;</span>);  <span style="color:#75715e">// 输出have a fun!!并退出
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#75715e">// 遍历数组进行相应处理
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">foreach</span>([$_GET, $_POST] <span style="color:#66d9ef">as</span> $global_var) { <span style="color:#75715e">// 遍历数组
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">foreach</span>($global_var <span style="color:#66d9ef">as</span> $key <span style="color:#f92672">=&gt;</span> $value) { 
+		$value <span style="color:#f92672">=</span> <span style="color:#a6e22e">trim</span>($value);  <span style="color:#75715e">// 函数移除字符串两侧的空白字符或其他预定义字符, 相关函数ltrim(), rtrim()
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">is_string</span>($value) <span style="color:#f92672">&amp;&amp;</span> $req[$key] <span style="color:#f92672">=</span> <span style="color:#a6e22e">addslashes</span>($value); <span style="color:#75715e">// 需要get($key)、post($value)传送过来的数据是一个字符串，是字符串才会存放到$req数组中 和 addslashes()  函数返回在预定义字符之前添加反斜杠的字符串: 单引号(&#39;); 双引号(&#34;);反斜杠(\); NULL
+</span><span style="color:#75715e"></span>	} 
+} 
+
+<span style="color:#75715e">// 判断回文
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">is_palindrome_number</span>($number) { <span style="color:#75715e">// 判断是否为回文数字
+</span><span style="color:#75715e"></span>	$number <span style="color:#f92672">=</span> <span style="color:#a6e22e">strval</span>($number); 
+	$i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; 
+	$j <span style="color:#f92672">=</span> <span style="color:#a6e22e">strlen</span>($number) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; 
+	<span style="color:#66d9ef">while</span>($i <span style="color:#f92672">&lt;</span> $j) { 
+		<span style="color:#66d9ef">if</span>($number[$i] <span style="color:#f92672">!==</span> $number[$j]) { <span style="color:#75715e">// 从两边往中间靠拢
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>; 
+		} 
+		$i<span style="color:#f92672">++</span>; 
+		$j<span style="color:#f92672">--</span>; 
+	} 
+	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>; 
+} 
+
+
+<span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">is_numeric</span>($_REQUEST[<span style="color:#e6db74">&#39;number&#39;</span>])) {<span style="color:#75715e">// 如果是纯数字或者数字字符串则报错
+</span><span style="color:#75715e"></span>	$info<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sorry, you cann&#39;t input a number!&#34;</span>;
+}
+
+<span style="color:#66d9ef">elseif</span>($req[<span style="color:#e6db74">&#39;number&#39;</span>]<span style="color:#f92672">!=</span><span style="color:#a6e22e">strval</span>(<span style="color:#a6e22e">intval</span>($req[<span style="color:#e6db74">&#39;number&#39;</span>]))) {<span style="color:#75715e">// 获取变量的字符串值(获取变量的整数值) 进行比较；需要是整数
+</span><span style="color:#75715e">// $req[$key] == req[&#39;number&#39;]
+</span><span style="color:#75715e"></span>	$info <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;number must be equal to it&#39;s integer!! &#34;</span>;  
+}
+
+<span style="color:#66d9ef">else</span> {
+
+	$value1 <span style="color:#f92672">=</span> <span style="color:#a6e22e">intval</span>($req[<span style="color:#e6db74">&#34;number&#34;</span>]);
+	$value2 <span style="color:#f92672">=</span> <span style="color:#a6e22e">intval</span>(<span style="color:#a6e22e">strrev</span>($req[<span style="color:#e6db74">&#34;number&#34;</span>])); <span style="color:#75715e">// 翻转字符串再获取它的整数值
+</span><span style="color:#75715e"></span>
+	<span style="color:#66d9ef">if</span>($value1<span style="color:#f92672">!=</span>$value2){ <span style="color:#75715e">// 整数值都不一样那就不是回文呗，例如121就是回文
+</span><span style="color:#75715e"></span>		$info<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;no, this is not a palindrome number!&#34;</span>;
+	}
+	<span style="color:#66d9ef">else</span> {
+
+		<span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">is_palindrome_number</span>($req[<span style="color:#e6db74">&#34;number&#34;</span>])){<span style="color:#75715e">// 若果它是回文那么就输出
+</span><span style="color:#75715e"></span>			$info <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;nice! </span><span style="color:#e6db74">{</span>$value1<span style="color:#e6db74">}</span><span style="color:#e6db74"> is a palindrome number!&#34;</span>; 
+		}
+		<span style="color:#66d9ef">else</span> {  <span style="color:#75715e">// 不然就输出flag
+</span><span style="color:#75715e"></span>			$info<span style="color:#f92672">=</span>$flag;
+		}
+	}
+}
+
+<span style="color:#66d9ef">echo</span> $info;
+</code></pre></div><h3 id="0x01-分析">0x01 分析</h3>
+<ul>
+<li>
+<p>一共需要过掉 4 个条件</p>
+<ul>
+<li>if(is_numeric($_REQUEST[&lsquo;number&rsquo;])) // 如果是纯数字或者数字字符串则报错</li>
+<li>经过trim() 处理的
+<ul>
+<li>if($req[&lsquo;number&rsquo;]!=strval(intval($req[&lsquo;number&rsquo;]))) // 获取变量的字符串值(获取变量的整数值) 进行比较</li>
+<li>if(intval($req[&ldquo;number&rdquo;]) != intval(strrev($req[&ldquo;number&rdquo;]))) // 取后整数值都一样</li>
+<li>is_palindrome_number() // 还要过掉回文判断</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>trim() 支持的空白字符</p>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">-</span> <span style="color:#66d9ef">NULL</span> <span style="color:#a6e22e">对应</span><span style="color:#f92672">%</span><span style="color:#ae81ff">00</span>
+
+<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">制表符</span> <span style="color:#a6e22e">对应</span><span style="color:#f92672">%</span><span style="color:#ae81ff">0</span><span style="color:#a6e22e">c</span>
+
+<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">换行</span> <span style="color:#a6e22e">对应</span><span style="color:#f92672">%</span><span style="color:#ae81ff">0</span><span style="color:#a6e22e">a</span>
+
+<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\x0B</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">垂直制表符</span> <span style="color:#f92672">%</span><span style="color:#ae81ff">0</span><span style="color:#a6e22e">b</span>
+
+<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\r</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">回车</span> <span style="color:#f92672">%</span><span style="color:#ae81ff">0</span><span style="color:#a6e22e">d</span>
+
+<span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">空格</span> <span style="color:#f92672">%</span><span style="color:#ae81ff">20</span>
+
+<span style="color:#75715e">// 那么看来它不支持%2b 即 + 号生成的空格
+</span><span style="color:#75715e"></span>
+</code></pre></div><ul>
+<li>is_numeric()</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#a6e22e">函数对于空字符</span><span style="color:#f92672">%</span><span style="color:#ae81ff">00</span><span style="color:#a6e22e">，无论是</span><span style="color:#f92672">%</span><span style="color:#ae81ff">00</span><span style="color:#a6e22e">放在前后都可以判断为非数值，而</span><span style="color:#f92672">%</span><span style="color:#ae81ff">20</span><span style="color:#a6e22e">空格字符只能放在数值后</span>
+</code></pre></div><ul>
+<li>intval()</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#a6e22e">函数有个特性</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;直到遇上数字或正负符号才开始做转换，再遇到非数字或字符串结束时(</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">)结束转换&#34;</span>
+</code></pre></div><p>综上所述：</p>
+<ul>
+<li>
+<ol>
+<li>不能使纯数字(串)  // is_numeric($_REQUEST[&lsquo;number&rsquo;])</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>strval() 之后要相等，即需要是整数 // $req[&lsquo;number&rsquo;]!=strval(intval($req[&lsquo;number&rsquo;]))</li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>反转后再取整后要和原来相等(需要是整数) // intval($req[&ldquo;number&rdquo;]) != intval(strrev($req[&ldquo;number&rdquo;]))</li>
+</ol>
+</li>
+<li>
+<ol start="4">
+<li>还要不是回文</li>
+</ol>
+</li>
+</ul>
+<h3 id="0x02-构造fuzz">0x02 构造(Fuzz)</h3>
+<ul>
+<li>
+<p>传进去的字符串会经过trim() 移除字符串两侧的空白字符或其他预定义字符，然后将key 和 经过addslashes()之后value存起来 req[key]=value;</p>
+</li>
+<li>
+<p>不能是纯数字(串)，又需要是整数, 经过trim() 去头去尾之后还要是非回文</p>
+<ul>
+<li>%2b121 经过trim()之后变成: <code>空格</code>121 可以绕过第一个纯数字的判断</li>
+<li>intval会忽略空白字符，所以可以绕过第二个取整后相等的判断</li>
+<li>payload：%00%0c121  或  %00%2b121  或  %2b121%00</li>
+</ul>
+</li>
+<li>
+<p>利用intval()溢出：%002147483647</p>
+</li>
+<li>
+<p>因为要求不能为回文数，但又要满足intval($req[&ldquo;number&rdquo;])=intval(strrev($req[&ldquo;number&rdquo;]))，所以我们采用科学计数法构造payload为number=0e-0%00  或  %00%2b0e0  或  %00%2d0e0    %2d == &ldquo;-&quot;。</p>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+
+$req <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34; \f121 &#34;</span>;
+
+<span style="color:#66d9ef">echo</span> $req<span style="color:#f92672">.</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+
+$req <span style="color:#f92672">=</span> <span style="color:#a6e22e">trim</span>($req);
+
+<span style="color:#66d9ef">echo</span> $req<span style="color:#f92672">.</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+
+<span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">intval</span>($req)<span style="color:#f92672">.</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+	
+<span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">strval</span>(<span style="color:#a6e22e">intval</span>($req))<span style="color:#f92672">.</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+
+<span style="color:#66d9ef">if</span> ($req <span style="color:#f92672">!=</span> <span style="color:#a6e22e">strval</span>(<span style="color:#a6e22e">intval</span>($req))) {
+	<span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;恭喜你失败了~&#34;</span>;
+}<span style="color:#66d9ef">else</span> {
+	<span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;成功绕过&#34;</span>;
+}
+
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><h3 id="0x03-参考链接">0x03 参考链接</h3>
+<p><a href="https://www.cnblogs.com/mkdd/p/13023618.html">https://www.cnblogs.com/mkdd/p/13023618.html</a></p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">标签</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/php/">PHP</a>
+
+  <a class="tag tag--primary tag--small" href="https://Zor01478.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/sqlab%E9%80%9A%E5%85%B3%E6%95%99%E7%A8%8B/" data-tooltip="Sqlab通关教程">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2021 Zor01478. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://Zor01478.github.io/2021/02/sqlab%E9%80%9A%E5%85%B3%E6%95%99%E7%A8%8B/" data-tooltip="Sqlab通关教程">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://gitee.com/zor01478/blog-picture/raw/master/images/caomao.png" alt="作者的图片" />
+    
+    <h4 id="about-card-name">Zor01478</h4>
+    
+      <div id="about-card-bio">戴了头盔，所以头很铁</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Sec
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        杭州
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    <div id="cover" style="background-image:url('https://gitee.com/zor01478/blog-picture/raw/master/images/qianyang.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://Zor01478.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+  
+    <script src="https://Zor01478.github.io/js/clicklove.js"></script>
+  
+
+  
+    <script src="https://Zor01478.github.io/js/snow.js"></script>
+  
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/Zor01478.github.io\/2021\/02\/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8%E4%B8%80\/';
+          
+            this.page.identifier = '\/2021\/02\/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8%E4%B8%80\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+
